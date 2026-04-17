@@ -1,8 +1,8 @@
-# Terraform
+# Terraform - only ignore the folder, keep the lock file
 .terraform/
 *.tfstate
 *.tfstate.*
-.terraform.lock.hcl
+!/.terraform.lock.hcl
 
 # Python
 __pycache__/
