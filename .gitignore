@@ -8,6 +8,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 .env
 venv/
 env/
@@ -23,3 +24,5 @@ env/
 # Secrets
 *.pem
 *.key
+
+.DS_Store
