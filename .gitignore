@@ -1,0 +1,28 @@
+# Terraform - only ignore the folder, keep the lock file
+.terraform/
+*.tfstate
+*.tfstate.*
+!/.terraform.lock.hcl
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.env
+venv/
+env/
+.env.local
+
+# Docker
+*.log
+
+# IDE
+.vscode/
+.DS_Store
+
+# Secrets
+*.pem
+*.key
+
+.DS_Store

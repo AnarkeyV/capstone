@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capstone-app
+  labels:
+    app: capstone
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: capstone
+  template:
+    metadata:
+      labels:
+        app: capstone
+    spec:
+      containers:
+      - name: app
+        image: capstonereg047af007.azurecr.io/capstone-app:v1
+        ports:
+        - containerPort: 8000
+        env:
+        - name: AZURE_REGION
+          value: "southeastasia"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
