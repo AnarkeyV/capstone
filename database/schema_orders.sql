@@ -1,70 +1,38 @@
 -- Drop tables in reverse order of dependencies
-DROP TABLE IF EXISTS Payments;
-DROP TABLE IF EXISTS OrderDetails;
-DROP TABLE IF EXISTS Orders;
-DROP TABLE IF EXISTS Addresses;
-DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS orders;
 
--- Users
-CREATE TABLE Users (
-    UserID INT PRIMARY KEY IDENTITY(1,1),
-    FirstName NVARCHAR(50) NOT NULL,
-    LastName NVARCHAR(50) NOT NULL,
-    Email NVARCHAR(100) NOT NULL UNIQUE,
-    PasswordHash NVARCHAR(256) NOT NULL,
-    PhoneNumber NVARCHAR(20)
+-- orders
+CREATE TABLE orders (
+    order_id NVARCHAR(30) PRIMARY KEY, -- Format: TSB-20260513-ABC123
+    customer_name NVARCHAR(200) NOT NULL,
+    customer_email NVARCHAR(200) NOT NULL,
+    shipping_address NVARCHAR(500) NOT NULL,
+    city NVARCHAR(100),
+    postal_code NVARCHAR(20),
+    country NVARCHAR(100) DEFAULT 'Singapore',
+    total_amount DECIMAL(10,2) NOT NULL,
+    payment_status NVARCHAR(20) DEFAULT 'pending', -- pending, succeeded, failed, refunded
+    stripe_payment_id NVARCHAR(100),
+    stripe_session_id NVARCHAR(200),
+    created_at DATETIME2 DEFAULT GETDATE(),
+    updated_at DATETIME2 DEFAULT GETDATE()
 );
 
--- Addresses
-CREATE TABLE Addresses (
-    AddressID INT PRIMARY KEY IDENTITY(1,1),
-    UserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
-    Street NVARCHAR(200) NOT NULL,
-    City NVARCHAR(100) NOT NULL,
-    State NVARCHAR(100) NOT NULL,
-    PostalCode NVARCHAR(20) NOT NULL,
-    Country NVARCHAR(100) NOT NULL
+-- order_items
+CREATE TABLE order_items (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    order_id NVARCHAR(30) NOT NULL,
+    product_id NVARCHAR(20) NOT NULL,
+    product_name NVARCHAR(200) NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
+    selected_size NVARCHAR(10),
+    selected_color NVARCHAR(50),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
 );
 
--- Orders
-CREATE TABLE Orders (
-    OrderID INT PRIMARY KEY IDENTITY(1,1),
-    UserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
-    OrderDate DATETIME DEFAULT GETDATE(),
-    Status NVARCHAR(20) NOT NULL DEFAULT 'Pending',
-    TotalAmount DECIMAL(10,2) NOT NULL DEFAULT 0.00
-);
-
--- OrderDetails
-CREATE TABLE OrderDetails (
-    OrderDetailID INT PRIMARY KEY IDENTITY(1,1),
-    OrderID INT NOT NULL FOREIGN KEY REFERENCES Orders(OrderID),
-    VariantID BIGINT NOT NULL, -- Constraint applied below safely
-    Quantity INT NOT NULL DEFAULT 1,
-    UnitPrice DECIMAL(10,2) NOT NULL
-);
-
--- Payments
-CREATE TABLE Payments (
-    PaymentID INT PRIMARY KEY IDENTITY(1,1),
-    OrderID INT NOT NULL FOREIGN KEY REFERENCES Orders(OrderID),
-    PaymentMethod NVARCHAR(50) NOT NULL,
-    PaymentDate DATETIME DEFAULT GETDATE(),
-    Amount DECIMAL(10,2) NOT NULL,
-    Status NVARCHAR(20) NOT NULL DEFAULT 'Pending'
-);
-
--- Safe Cross-Schema Link: Apply foreign key to Variants if the table exists
-IF OBJECT_ID('dbo.Variants', 'U') IS NOT NULL
-BEGIN
-    ALTER TABLE OrderDetails 
-    ADD CONSTRAINT FK_OrderDetails_Variants 
-    FOREIGN KEY (VariantID) REFERENCES Variants(VariantID);
-END
-
--- Indexes for performance optimization
-CREATE NONCLUSTERED INDEX IX_Orders_UserID ON Orders(UserID);
-CREATE NONCLUSTERED INDEX IX_Orders_OrderDate_Status ON Orders(OrderDate, Status);
-CREATE NONCLUSTERED INDEX IX_OrderDetails_OrderID ON OrderDetails(OrderID);
-CREATE NONCLUSTERED INDEX IX_Payments_OrderID ON Payments(OrderID);
-
+-- Indexes for order queries
+CREATE INDEX idx_orders_email ON orders(customer_email);
+CREATE INDEX idx_orders_status ON orders(payment_status);
+CREATE INDEX idx_orders_date ON orders(created_at DESC);

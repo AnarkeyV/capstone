@@ -71,15 +71,10 @@ def main():
         # DevOps Master Reset: Drop order tables FIRST to release foreign keys on product tables
         print("[*] Clearing old constraints and tables...")
         drop_commands = """
-        DROP TABLE IF EXISTS Payments;
-        DROP TABLE IF EXISTS OrderDetails;
-        DROP TABLE IF EXISTS Orders;
-        DROP TABLE IF EXISTS Addresses;
-        DROP TABLE IF EXISTS Users;
-        DROP TABLE IF EXISTS Inventory;
-        DROP TABLE IF EXISTS Variants;
-        DROP TABLE IF EXISTS Products;
-        DROP TABLE IF EXISTS Collections;
+        DROP TABLE IF EXISTS order_items;
+        DROP TABLE IF EXISTS orders;
+        DROP TABLE IF EXISTS products;
+        DROP TABLE IF EXISTS categories;
         """
         cursor.execute(drop_commands)
 
