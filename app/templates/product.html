@@ -5,9 +5,9 @@
 
   <!-- BREADCRUMB -->
   <nav class="breadcrumb">
-    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('product.home') }}">Home</a>
     <span>/</span>
-    <a href="{{ url_for('home') }}">Shop</a>
+    <a href="{{ url_for('product.home') }}">Shop</a>
     <span>/</span>
     <span>{{ product.name if product else "Product Name" }}</span>
   </nav>
@@ -60,9 +60,8 @@
       </div>
 
       <!-- ADD TO CART FORM -->
-      <form action="{{ url_for('add_to_cart') }}" method="POST" class="add-to-cart-form">
-        <input type="hidden" name="product_id" value="{{ product.id if product else '1' }}">
-
+      <form action="{{ url_for('cart.add_to_cart', product_id=product.product_id) }}" method="POST" class="add-to-cart-form">
+        
         <!-- Colour Selector -->
         <div class="selector-group">
           <label class="selector-label">
@@ -87,7 +86,7 @@
               <button type="button" class="colour-swatch" data-colour="Sage" style="background:#8fad91;" title="Sage"></button>
             {% endif %}
           </div>
-          <input type="hidden" name="colour" id="colourInput" value="White">
+          <input type="hidden" name="color" id="colourInput" value="White">
         </div>
 
         <!-- Size Selector -->

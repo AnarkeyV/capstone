@@ -21,7 +21,7 @@
 
   <div class="page-header">
     <h1 class="page-title">Checkout</h1>
-    <a href="{{ url_for('cart') }}" class="back-link">← Back to Cart</a>
+    <a href="{{ url_for('cart.cart') }}" class="back-link">← Back to Cart</a>
   </div>
 
   <!-- Progress steps -->
@@ -47,8 +47,7 @@
     <!-- LEFT: Shipping + Payment Form -->
     <div class="checkout-form-section">
 
-      <form id="payment-form" action="{{ url_for('checkout') }}" method="POST">
-
+      <form id="payment-form" action="{{ url_for('checkout.create_checkout_session') }}" method="POST">
         <!-- Shipping Details -->
         <div class="form-section">
           <h2 class="form-section-title">Shipping Details</h2>

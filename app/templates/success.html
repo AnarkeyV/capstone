@@ -28,7 +28,7 @@
         <h2 class="result-section-title">What you ordered</h2>
         {% for item in order_items %}
           <div class="result-order-item">
-            <span class="result-item-name">{{ item.name }} <span class="result-item-variant">{{ item.size }} · {{ item.colour }}</span></span>
+            <span class="result-item-name">{{ item.name }} <span class="result-item-variant">{{ item.size }} · {{ item.color }}</span></span>
             <span class="result-item-qty">× {{ item.quantity }}</span>
             <span class="result-item-price">S${{ "%.2f"|format(item.price * item.quantity) }}</span>
           </div>
@@ -70,7 +70,7 @@
 
     <!-- Actions -->
     <div class="result-actions">
-      <a href="{{ url_for('home') }}" class="btn btn-primary">Continue Shopping</a>
+      <a href="{{ url_for('product.home') }}" class="btn btn-primary">Continue Shopping</a>
       <a href="#" class="btn btn-ghost">Track My Order</a>
     </div>
 
