@@ -64,7 +64,7 @@
       {% if products %}
         {% for product in products %}
           <div class="product-card" data-category="{{ product.category }}">
-            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-card-link">
+            <a href="{{ url_for('product.product_detail', product_id=product.product_id) }}" class="product-card-link">
               <div class="product-image-wrapper">
                 {% if product.image_url %}
                   <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" loading="lazy">
@@ -87,7 +87,7 @@
               </div>
             </a>
             <div class="product-card-actions">
-              <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-outline btn-sm">View Details</a>
+              <a href="{{ url_for('product.product_detail', product_id=product.product_id) }}" class="btn btn-outline btn-sm">View Details</a>
             </div>
           </div>
         {% endfor %}

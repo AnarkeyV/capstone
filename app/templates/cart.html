@@ -6,10 +6,10 @@
 
   <div class="page-header">
     <h1 class="page-title">Shopping Cart</h1>
-    <a href="{{ url_for('home') }}" class="back-link">← Continue Shopping</a>
+    <a href="{{ url_for('product.home') }}" class="back-link">← Continue Shopping</a>
   </div>
 
-  {% if cart_items %}
+  {% if cart %}
 
     <div class="cart-layout">
 
@@ -26,9 +26,10 @@
               <th></th>
             </tr>
           </thead>
+
           <tbody>
-            {% for item in cart_items %}
-              <tr class="cart-row" id="row-{{ item.cart_item_id }}">
+            {% for cart_key, item in cart.items() %}
+              <tr class="cart-row">
 
                 <!-- Product Info -->
                 <td class="cart-product-cell">
@@ -40,9 +41,10 @@
                         <span>{{ item.name[:2] }}</span>
                       </div>
                     {% endif %}
+
                     <div>
                       <p class="cart-item-name">{{ item.name }}</p>
-                      <p class="cart-item-cat">{{ item.category_label }}</p>
+                      <p class="cart-item-cat">{{ item.product_id }}</p>
                     </div>
                   </div>
                 </td>
@@ -50,20 +52,28 @@
                 <!-- Size / Colour -->
                 <td class="cart-variants">
                   <span class="variant-tag">{{ item.size }}</span>
-                  <span class="variant-tag">{{ item.colour }}</span>
+                  <span class="variant-tag">{{ item.color }}</span>
                 </td>
 
                 <!-- Unit Price -->
-                <td class="cart-unit-price">S${{ "%.2f"|format(item.price) }}</td>
+                <td class="cart-unit-price">
+                  S${{ "%.2f"|format(item.price) }}
+                </td>
 
                 <!-- Quantity Adjuster -->
                 <td class="cart-qty-cell">
-                  <form action="{{ url_for('update_cart') }}" method="POST" class="qty-form">
-                    <input type="hidden" name="cart_item_id" value="{{ item.cart_item_id }}">
+                  <form action="{{ url_for('cart.update_cart', cart_key=cart_key) }}" method="POST" class="qty-form">
                     <div class="quantity-control quantity-control--sm">
                       <button type="button" class="qty-btn" onclick="adjustQty(this, -1)">−</button>
-                      <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="10"
-                             class="qty-input" onchange="this.form.submit()">
+
+                      <input type="number"
+                             name="quantity"
+                             value="{{ item.quantity }}"
+                             min="1"
+                             max="10"
+                             class="qty-input"
+                             onchange="this.form.submit()">
+
                       <button type="button" class="qty-btn" onclick="adjustQty(this, 1)">+</button>
                     </div>
                   </form>
@@ -76,13 +86,9 @@
 
                 <!-- Remove -->
                 <td class="cart-remove-cell">
-                  <form action="{{ url_for('remove_from_cart') }}" method="POST">
-                    <input type="hidden" name="cart_item_id" value="{{ item.cart_item_id }}">
+                  <form action="{{ url_for('cart.remove_from_cart', cart_key=cart_key) }}" method="POST">
                     <button type="submit" class="remove-btn" title="Remove item">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
-                        <path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
-                      </svg>
+                      Remove
                     </button>
                   </form>
                 </td>
@@ -91,78 +97,65 @@
             {% endfor %}
           </tbody>
         </table>
-      </div><!-- /.cart-items-section -->
+      </div>
 
       <!-- ORDER SUMMARY -->
       <div class="cart-summary">
         <h2 class="summary-title">Order Summary</h2>
 
-        <!-- Promo Code -->
-        <form action="{{ url_for('apply_promo') }}" method="POST" class="promo-form">
-          <label class="promo-label">Promo / Discount Code</label>
-          <div class="promo-input-group">
-            <input type="text" name="promo_code" placeholder="Enter code"
-                   value="{{ applied_promo if applied_promo else '' }}"
-                   class="promo-input">
-            <button type="submit" class="btn btn-outline btn-sm">Apply</button>
-          </div>
-          {% if promo_error %}
-            <p class="promo-error">{{ promo_error }}</p>
-          {% endif %}
-          {% if promo_success %}
-            <p class="promo-success">✓ {{ promo_success }}</p>
-          {% endif %}
-        </form>
-
         <div class="summary-lines">
           <div class="summary-line">
-            <span>Subtotal ({{ cart_items|length }} item{{ 's' if cart_items|length != 1 }})</span>
+            <span>
+              Subtotal ({{ cart|length }} item{{ 's' if cart|length != 1 }})
+            </span>
             <span>S${{ "%.2f"|format(subtotal) }}</span>
           </div>
+
           <div class="summary-line">
             <span>Shipping</span>
             <span class="{{ 'text-accent' if shipping == 0 else '' }}">
               {{ "Free" if shipping == 0 else "S$%.2f"|format(shipping) }}
             </span>
           </div>
-          {% if discount %}
-            <div class="summary-line text-accent">
-              <span>Discount</span>
-              <span>− S${{ "%.2f"|format(discount) }}</span>
-            </div>
-          {% endif %}
+
           <div class="summary-line summary-total">
             <span>Total</span>
             <span>S${{ "%.2f"|format(total) }}</span>
           </div>
         </div>
 
-        <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-full">
+        <a href="{{ url_for('checkout.checkout') }}" class="btn btn-primary btn-full">
           Proceed to Checkout →
         </a>
+
         <p class="summary-secure">
           🔒 Secure checkout powered by Stripe
         </p>
-      </div><!-- /.cart-summary -->
+      </div>
 
-    </div><!-- /.cart-layout -->
+    </div>
 
   {% else %}
+
     <!-- EMPTY CART STATE -->
     <div class="empty-state">
       <div class="empty-state-icon">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
           <path d="M16 10a4 4 0 01-8 0"/>
         </svg>
       </div>
+
       <h2>Your cart is empty</h2>
       <p>Looks like you haven't added anything yet. Explore our collection and find something you love.</p>
-      <a href="{{ url_for('home') }}" class="btn btn-primary">Shop Now</a>
+
+      <a href="{{ url_for('product.home') }}" class="btn btn-primary">Shop Now</a>
     </div>
+
   {% endif %}
 
-</div><!-- /.page-container -->
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -171,6 +164,7 @@
     const form = btn.closest('.qty-form');
     const input = form.querySelector('input[name="quantity"]');
     const newVal = parseInt(input.value) + delta;
+
     if (newVal >= 1 && newVal <= 10) {
       input.value = newVal;
       form.submit();
