@@ -123,16 +123,14 @@
         <!-- Payment Details -->
         <div class="form-section">
           <h2 class="form-section-title">Payment</h2>
-          <p class="form-section-note">Your payment is secured by Stripe. We never store your card details.</p>
-
-          <!-- Stripe Payment Element mounts here -->
-          <div id="payment-element"></div>
-          <div id="payment-message"></div>
+          <p class="form-section-note">
+            You will be redirected to Stripe's secure checkout page to complete payment.
+          </p>
         </div>
 
         <!-- Submit -->
         <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
-          <span id="button-text">Pay S${{ "%.2f"|format(total) if total else "0.00" }}</span>
+          <span id="button-text">Continue to Secure Payment — S${{ "%.2f"|format(total) if total else "0.00" }}</span>
           <span id="spinner" class="btn-spinner" style="display:none;"></span>
         </button>
 
@@ -229,52 +227,4 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Stripe.js is loaded by your Flask route when client_secret is available -->
-{% if stripe_publishable_key %}
-<script src="https://js.stripe.com/v3/"></script>
-<script>
-  const stripe = Stripe('{{ stripe_publishable_key }}');
-  const clientSecret = '{{ client_secret }}';
-
-  const elements = stripe.elements({ clientSecret });
-  const paymentElement = elements.create('payment');
-  paymentElement.mount('#payment-element');
-
-  const form = document.getElementById('payment-form');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: window.location.origin + '{{ url_for("payment_success") }}',
-        receipt_email: document.getElementById('email').value,
-        shipping: {
-          name: document.getElementById('first_name').value + ' ' + document.getElementById('last_name').value,
-          address: {
-            line1: document.getElementById('address').value,
-            city: document.getElementById('city').value,
-            postal_code: document.getElementById('postal_code').value,
-            country: document.getElementById('country').value,
-          }
-        }
-      }
-    });
-
-    if (error) {
-      const msgEl = document.getElementById('payment-message');
-      msgEl.textContent = error.message;
-      msgEl.style.display = 'block';
-      setLoading(false);
-    }
-  });
-
-  function setLoading(isLoading) {
-    document.getElementById('submit-btn').disabled = isLoading;
-    document.getElementById('spinner').style.display = isLoading ? 'inline-block' : 'none';
-    document.getElementById('button-text').style.display = isLoading ? 'none' : 'inline';
-  }
-</script>
-{% endif %}
 {% endblock %}
