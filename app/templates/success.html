@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="result-page result-page--success">
+
+    <!-- Icon -->
+    <div class="result-icon result-icon--success">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    </div>
+
+    <h1 class="result-title">Order Confirmed!</h1>
+    <p class="result-message">Thank you for your purchase. Your order has been received and is being processed.</p>
+
+    {% if order_id %}
+      <div class="order-ref">
+        <span>Order Reference</span>
+        <strong>{{ order_id }}</strong>
+      </div>
+    {% endif %}
+
+    <!-- Order Details -->
+    {% if order_items %}
+      <div class="result-order-summary">
+        <h2 class="result-section-title">What you ordered</h2>
+        {% for item in order_items %}
+          <div class="result-order-item">
+            <span class="result-item-name">{{ item.name }} <span class="result-item-variant">{{ item.size }} · {{ item.colour }}</span></span>
+            <span class="result-item-qty">× {{ item.quantity }}</span>
+            <span class="result-item-price">S${{ "%.2f"|format(item.price * item.quantity) }}</span>
+          </div>
+        {% endfor %}
+        <div class="result-total-line">
+          <span>Total Paid</span>
+          <strong>S${{ "%.2f"|format(order_total) if order_total else "—" }}</strong>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- What's next -->
+    <div class="result-next-steps">
+      <h2 class="result-section-title">What happens next?</h2>
+      <div class="next-steps-list">
+        <div class="next-step">
+          <span class="next-step-num">1</span>
+          <div>
+            <strong>Confirmation email</strong>
+            <p>We've sent your order confirmation to{% if customer_email %} <strong>{{ customer_email }}</strong>{% else %} your email{% endif %}.</p>
+          </div>
+        </div>
+        <div class="next-step">
+          <span class="next-step-num">2</span>
+          <div>
+            <strong>Packing & dispatch</strong>
+            <p>Your shirt(s) will be carefully packed with our signature paper wrap and brand sticker.</p>
+          </div>
+        </div>
+        <div class="next-step">
+          <span class="next-step-num">3</span>
+          <div>
+            <strong>Delivery</strong>
+            <p>Tracked shipping — estimated 3–7 business days for Singapore, 7–14 days internationally.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="result-actions">
+      <a href="{{ url_for('home') }}" class="btn btn-primary">Continue Shopping</a>
+      <a href="#" class="btn btn-ghost">Track My Order</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

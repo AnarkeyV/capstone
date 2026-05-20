@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+{% block title %}Checkout{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Stripe Payment Element sits inside this div */
+  #payment-element {
+    margin-bottom: 1.5rem;
+  }
+  #payment-message {
+    color: #dc2626;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: none;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+
+  <div class="page-header">
+    <h1 class="page-title">Checkout</h1>
+    <a href="{{ url_for('cart') }}" class="back-link">← Back to Cart</a>
+  </div>
+
+  <!-- Progress steps -->
+  <div class="checkout-steps">
+    <div class="step completed">
+      <span class="step-num">✓</span>
+      <span class="step-label">Cart</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step active">
+      <span class="step-num">2</span>
+      <span class="step-label">Checkout</span>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step">
+      <span class="step-num">3</span>
+      <span class="step-label">Confirmation</span>
+    </div>
+  </div>
+
+  <div class="checkout-layout">
+
+    <!-- LEFT: Shipping + Payment Form -->
+    <div class="checkout-form-section">
+
+      <form id="payment-form" action="{{ url_for('checkout') }}" method="POST">
+
+        <!-- Shipping Details -->
+        <div class="form-section">
+          <h2 class="form-section-title">Shipping Details</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="first_name">First Name *</label>
+              <input type="text" id="first_name" name="first_name" required
+                     placeholder="John"
+                     value="{{ form_data.first_name if form_data else '' }}">
+            </div>
+            <div class="form-group">
+              <label for="last_name">Last Name *</label>
+              <input type="text" id="last_name" name="last_name" required
+                     placeholder="Tan"
+                     value="{{ form_data.last_name if form_data else '' }}">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required
+                   placeholder="john@example.com"
+                   value="{{ form_data.email if form_data else '' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone"
+                   placeholder="+65 9123 4567"
+                   value="{{ form_data.phone if form_data else '' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="address">Shipping Address *</label>
+            <input type="text" id="address" name="address" required
+                   placeholder="123 Orchard Road, #01-01"
+                   value="{{ form_data.address if form_data else '' }}">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city">City *</label>
+              <input type="text" id="city" name="city" required
+                     placeholder="Singapore"
+                     value="{{ form_data.city if form_data else 'Singapore' }}">
+            </div>
+            <div class="form-group">
+              <label for="postal_code">Postal Code *</label>
+              <input type="text" id="postal_code" name="postal_code" required
+                     placeholder="123456"
+                     value="{{ form_data.postal_code if form_data else '' }}">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="country">Country *</label>
+            <select id="country" name="country" required>
+              <option value="">Select country</option>
+              <option value="SG" {% if not form_data or form_data.country == 'SG' %}selected{% endif %}>Singapore</option>
+              <option value="MY" {% if form_data and form_data.country == 'MY' %}selected{% endif %}>Malaysia</option>
+              <option value="AU" {% if form_data and form_data.country == 'AU' %}selected{% endif %}>Australia</option>
+              <option value="US" {% if form_data and form_data.country == 'US' %}selected{% endif %}>United States</option>
+              <option value="GB" {% if form_data and form_data.country == 'GB' %}selected{% endif %}>United Kingdom</option>
+              <option value="HK" {% if form_data and form_data.country == 'HK' %}selected{% endif %}>Hong Kong</option>
+              <option value="JP" {% if form_data and form_data.country == 'JP' %}selected{% endif %}>Japan</option>
+              <option value="OTHER" {% if form_data and form_data.country == 'OTHER' %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+
+        </div><!-- /.form-section shipping -->
+
+        <!-- Payment Details -->
+        <div class="form-section">
+          <h2 class="form-section-title">Payment</h2>
+          <p class="form-section-note">Your payment is secured by Stripe. We never store your card details.</p>
+
+          <!-- Stripe Payment Element mounts here -->
+          <div id="payment-element"></div>
+          <div id="payment-message"></div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
+          <span id="button-text">Pay S${{ "%.2f"|format(total) if total else "0.00" }}</span>
+          <span id="spinner" class="btn-spinner" style="display:none;"></span>
+        </button>
+
+        <p class="checkout-legal">
+          By placing your order, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        </p>
+
+      </form>
+    </div><!-- /.checkout-form-section -->
+
+    <!-- RIGHT: Order Summary -->
+    <div class="checkout-summary">
+      <h2 class="summary-title">Order Summary</h2>
+
+      {% if cart_items %}
+        <div class="checkout-items">
+          {% for item in cart_items %}
+            <div class="checkout-item">
+              <div class="checkout-item-img-wrapper">
+                {% if item.image_url %}
+                  <img src="{{ item.image_url }}" alt="{{ item.name }}" class="checkout-item-img">
+                {% else %}
+                  <div class="checkout-item-img-placeholder">{{ item.name[:2] }}</div>
+                {% endif %}
+                <span class="checkout-item-qty">{{ item.quantity }}</span>
+              </div>
+              <div class="checkout-item-info">
+                <p class="checkout-item-name">{{ item.name }}</p>
+                <p class="checkout-item-variant">{{ item.size }} · {{ item.colour }}</p>
+              </div>
+              <p class="checkout-item-price">S${{ "%.2f"|format(item.price * item.quantity) }}</p>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="summary-lines">
+          <div class="summary-line">
+            <span>Subtotal</span>
+            <span>S${{ "%.2f"|format(subtotal) if subtotal else "0.00" }}</span>
+          </div>
+          <div class="summary-line">
+            <span>Shipping</span>
+            <span>{{ "Free" if shipping == 0 else "S$%.2f"|format(shipping) }}</span>
+          </div>
+          {% if discount %}
+            <div class="summary-line text-accent">
+              <span>Discount</span>
+              <span>− S${{ "%.2f"|format(discount) }}</span>
+            </div>
+          {% endif %}
+          <div class="summary-line summary-total">
+            <span>Total</span>
+            <span>S${{ "%.2f"|format(total) if total else "0.00" }}</span>
+          </div>
+        </div>
+      {% else %}
+        <!-- Placeholder summary when no cart data yet -->
+        <div class="summary-lines">
+          <div class="summary-line">
+            <span>Items</span>
+            <span>—</span>
+          </div>
+          <div class="summary-line">
+            <span>Shipping</span>
+            <span>Free</span>
+          </div>
+          <div class="summary-line summary-total">
+            <span>Total</span>
+            <span>S$0.00</span>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="checkout-trust">
+        <div class="trust-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          SSL Encrypted & Secure
+        </div>
+        <div class="trust-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Free worldwide shipping
+        </div>
+        <div class="trust-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+          14-day exchange policy
+        </div>
+      </div>
+
+    </div><!-- /.checkout-summary -->
+
+  </div><!-- /.checkout-layout -->
+
+</div><!-- /.page-container -->
+{% endblock %}
+
+{% block extra_js %}
+<!-- Stripe.js is loaded by your Flask route when client_secret is available -->
+{% if stripe_publishable_key %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  const stripe = Stripe('{{ stripe_publishable_key }}');
+  const clientSecret = '{{ client_secret }}';
+
+  const elements = stripe.elements({ clientSecret });
+  const paymentElement = elements.create('payment');
+  paymentElement.mount('#payment-element');
+
+  const form = document.getElementById('payment-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: window.location.origin + '{{ url_for("payment_success") }}',
+        receipt_email: document.getElementById('email').value,
+        shipping: {
+          name: document.getElementById('first_name').value + ' ' + document.getElementById('last_name').value,
+          address: {
+            line1: document.getElementById('address').value,
+            city: document.getElementById('city').value,
+            postal_code: document.getElementById('postal_code').value,
+            country: document.getElementById('country').value,
+          }
+        }
+      }
+    });
+
+    if (error) {
+      const msgEl = document.getElementById('payment-message');
+      msgEl.textContent = error.message;
+      msgEl.style.display = 'block';
+      setLoading(false);
+    }
+  });
+
+  function setLoading(isLoading) {
+    document.getElementById('submit-btn').disabled = isLoading;
+    document.getElementById('spinner').style.display = isLoading ? 'inline-block' : 'none';
+    document.getElementById('button-text').style.display = isLoading ? 'none' : 'inline';
+  }
+</script>
+{% endif %}
+{% endblock %}

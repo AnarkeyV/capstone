@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% block title %}Shop Premium Menswear{% endblock %}
+
+{% block content %}
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-content">
+      <p class="hero-eyebrow">New Collection 2026</p>
+      <h1 class="hero-title">Crafted for the<br><em>Modern Gentleman</em></h1>
+      <p class="hero-subtitle">Premium sustainable shirts engineered with Bamboo, Tencel, and Pima Cotton — wrinkle-free, anti-odour, built for Singapore's heat.</p>
+      <div class="hero-actions">
+        <a href="#products" class="btn btn-primary">Shop Now</a>
+        <a href="#" class="btn btn-ghost">Our Story</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="hero-placeholder">
+        <div class="hero-placeholder-inner">
+          <span>Featured Collection</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST STRIP -->
+  <div class="trust-strip">
+    <div class="trust-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Free Worldwide Shipping
+    </div>
+    <div class="trust-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      14-Day Exchange
+    </div>
+    <div class="trust-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Secure Payments
+    </div>
+    <div class="trust-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Sustainably Made
+    </div>
+  </div>
+
+  <!-- CATEGORY FILTER -->
+  <section class="category-section" id="products">
+    <div class="section-header">
+      <h2 class="section-title">Our Collection</h2>
+      <p class="section-subtitle">Explore premium essentials for every occasion</p>
+    </div>
+
+    <div class="category-filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="formal">Formal Shirts</button>
+      <button class="filter-btn" data-filter="casual">Casual Shirts</button>
+      <button class="filter-btn" data-filter="tshirts">T-Shirts</button>
+      <button class="filter-btn" data-filter="polo">Polo</button>
+    </div>
+
+    <!-- PRODUCT GRID -->
+    <div class="product-grid" id="productGrid">
+
+      {% if products %}
+        {% for product in products %}
+          <div class="product-card" data-category="{{ product.category }}">
+            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-card-link">
+              <div class="product-image-wrapper">
+                {% if product.image_url %}
+                  <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" loading="lazy">
+                {% else %}
+                  <div class="product-img-placeholder">
+                    <span>{{ product.name }}</span>
+                  </div>
+                {% endif %}
+                {% if product.is_new %}
+                  <span class="product-badge product-badge--new">New</span>
+                {% endif %}
+                {% if product.is_bestseller %}
+                  <span class="product-badge product-badge--hot">Bestseller</span>
+                {% endif %}
+              </div>
+              <div class="product-info">
+                <p class="product-category-label">{{ product.category_label }}</p>
+                <h3 class="product-name">{{ product.name }}</h3>
+                <p class="product-price">S${{ "%.2f"|format(product.price) }}</p>
+              </div>
+            </a>
+            <div class="product-card-actions">
+              <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-outline btn-sm">View Details</a>
+            </div>
+          </div>
+        {% endfor %}
+
+      {% else %}
+        <!-- PLACEHOLDER CARDS (shown when no products in DB yet) -->
+        {% set placeholder_products = [
+          {"name": "Essential White Dress Shirt", "price": "89.90", "category": "formal", "label": "Formal"},
+          {"name": "Wrinkle-Free Oxford Shirt", "price": "99.90", "category": "formal", "label": "Formal"},
+          {"name": "Bamboo Casual Shirt — Navy", "price": "79.90", "category": "casual", "label": "Casual"},
+          {"name": "Tencel Linen Shirt — Sage", "price": "84.90", "category": "casual", "label": "Casual"},
+          {"name": "Pima Cotton Henley Tee", "price": "49.90", "category": "tshirts", "label": "T-Shirts"},
+          {"name": "Oversized Essential Tee", "price": "54.90", "category": "tshirts", "label": "T-Shirts"},
+          {"name": "Classic Polo — Charcoal", "price": "64.90", "category": "polo", "label": "Polo"},
+          {"name": "Slim Fit Polo — White", "price": "64.90", "category": "polo", "label": "Polo"}
+        ] %}
+        {% for p in placeholder_products %}
+          <div class="product-card" data-category="{{ p.category }}">
+            <a href="#" class="product-card-link">
+              <div class="product-image-wrapper">
+                <div class="product-img-placeholder">
+                  <span>{{ p.name }}</span>
+                </div>
+                {% if loop.index <= 2 %}
+                  <span class="product-badge product-badge--new">New</span>
+                {% endif %}
+                {% if loop.index == 1 or loop.index == 5 %}
+                  <span class="product-badge product-badge--hot">Bestseller</span>
+                {% endif %}
+              </div>
+              <div class="product-info">
+                <p class="product-category-label">{{ p.label }}</p>
+                <h3 class="product-name">{{ p.name }}</h3>
+                <p class="product-price">S${{ p.price }}</p>
+              </div>
+            </a>
+            <div class="product-card-actions">
+              <a href="#" class="btn btn-outline btn-sm">View Details</a>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+    </div><!-- /.product-grid -->
+  </section>
+
+  <!-- BRAND STRIP -->
+  <section class="brand-strip">
+    <div class="brand-strip-inner">
+      <div class="brand-strip-text">
+        <h2>Built for Singapore.<br>Designed for the World.</h2>
+        <p>Every shirt is engineered for comfort in tropical heat — wrinkle-free, anti-odour, and sustainably made. Worn from Orchard Road to boardrooms worldwide.</p>
+        <a href="#" class="btn btn-primary">Explore the Story</a>
+      </div>
+      <div class="brand-strip-stats">
+        <div class="stat">
+          <span class="stat-number">10K+</span>
+          <span class="stat-label">Happy Customers</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">5</span>
+          <span class="stat-label">Singapore Stores</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">100%</span>
+          <span class="stat-label">Sustainably Sourced</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">14</span>
+          <span class="stat-label">Day Exchange</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Category filter
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const productCards = document.querySelectorAll('.product-card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+      productCards.forEach(card => {
+        if (filter === 'all' || card.dataset.category === filter) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}
