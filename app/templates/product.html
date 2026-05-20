@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name if product else "Product Detail" }}{% endblock %}
+
+{% block content %}
+
+  <!-- BREADCRUMB -->
+  <nav class="breadcrumb">
+    <a href="{{ url_for('home') }}">Home</a>
+    <span>/</span>
+    <a href="{{ url_for('home') }}">Shop</a>
+    <span>/</span>
+    <span>{{ product.name if product else "Product Name" }}</span>
+  </nav>
+
+  <div class="product-detail-layout">
+
+    <!-- LEFT: Product Image Gallery -->
+    <div class="product-gallery">
+      <div class="product-main-image">
+        {% if product and product.image_url %}
+          <img src="{{ product.image_url }}" alt="{{ product.name }}" id="mainImage">
+        {% else %}
+          <div class="gallery-placeholder" id="mainImage">
+            <div class="gallery-placeholder-inner">
+              <p>Product Image</p>
+              <p class="placeholder-sub">{{ product.name if product else "Sample Formal Shirt" }}</p>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Thumbnail strip (placeholders for now) -->
+      <div class="product-thumbnails">
+        {% for i in range(4) %}
+          <div class="thumbnail {{ 'active' if loop.first }}" data-src="{{ product.image_url if product and product.image_url else '#' }}">
+            <div class="thumbnail-placeholder">
+              <span>{{ loop.index }}</span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- RIGHT: Product Info -->
+    <div class="product-details">
+
+      <div class="product-detail-header">
+        <p class="product-category-label">{{ product.category_label if product else "Formal Shirts" }}</p>
+        <h1 class="product-detail-name">{{ product.name if product else "Essential White Dress Shirt" }}</h1>
+        <div class="product-detail-price">
+          <span class="price-current">S${{ "%.2f"|format(product.price) if product else "89.90" }}</span>
+          {% if product and product.original_price and product.original_price > product.price %}
+            <span class="price-original">S${{ "%.2f"|format(product.original_price) }}</span>
+            <span class="price-savings">Save S${{ "%.2f"|format(product.original_price - product.price) }}</span>
+          {% endif %}
+        </div>
+        <p class="product-short-desc">
+          {{ product.description if product else "Crafted from wrinkle-free, anti-bacterial fabric. Long-lasting white finish. Anti-UV and anti-odour technology — engineered for Singapore's climate." }}
+        </p>
+      </div>
+
+      <!-- ADD TO CART FORM -->
+      <form action="{{ url_for('add_to_cart') }}" method="POST" class="add-to-cart-form">
+        <input type="hidden" name="product_id" value="{{ product.id if product else '1' }}">
+
+        <!-- Colour Selector -->
+        <div class="selector-group">
+          <label class="selector-label">
+            Colour: <span class="selector-value" id="selectedColour">White</span>
+          </label>
+          <div class="colour-swatches">
+            {% if product and product.colours %}
+              {% for colour in product.colours %}
+                <button type="button"
+                  class="colour-swatch {{ 'active' if loop.first }}"
+                  data-colour="{{ colour.name }}"
+                  style="background-color: {{ colour.hex }};"
+                  title="{{ colour.name }}">
+                </button>
+              {% endfor %}
+            {% else %}
+              <!-- Placeholder colours -->
+              <button type="button" class="colour-swatch active" data-colour="White" style="background:#ffffff; border: 2px solid #ccc;" title="White"></button>
+              <button type="button" class="colour-swatch" data-colour="Light Blue" style="background:#a8c5da;" title="Light Blue"></button>
+              <button type="button" class="colour-swatch" data-colour="Charcoal" style="background:#4a4a4a;" title="Charcoal"></button>
+              <button type="button" class="colour-swatch" data-colour="Navy" style="background:#1a2e4a;" title="Navy"></button>
+              <button type="button" class="colour-swatch" data-colour="Sage" style="background:#8fad91;" title="Sage"></button>
+            {% endif %}
+          </div>
+          <input type="hidden" name="colour" id="colourInput" value="White">
+        </div>
+
+        <!-- Size Selector -->
+        <div class="selector-group">
+          <label class="selector-label">
+            Size: <span class="selector-value" id="selectedSize">—</span>
+          </label>
+          <div class="size-buttons">
+            {% set sizes = product.sizes if product and product.sizes else ['XS', 'S', 'M', 'L', 'XL', 'XXL'] %}
+            {% for size in sizes %}
+              <button type="button"
+                class="size-btn"
+                data-size="{{ size }}">
+                {{ size }}
+              </button>
+            {% endfor %}
+          </div>
+          <input type="hidden" name="size" id="sizeInput" value="">
+          <a href="#size-guide" class="size-guide-link">Size Guide ↗</a>
+        </div>
+
+        <!-- Quantity Selector -->
+        <div class="selector-group">
+          <label class="selector-label">Quantity</label>
+          <div class="quantity-control">
+            <button type="button" class="qty-btn" id="qtyMinus">−</button>
+            <input type="number" name="quantity" id="qtyInput" value="1" min="1" max="10" class="qty-input">
+            <button type="button" class="qty-btn" id="qtyPlus">+</button>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="add-to-cart-actions">
+          <button type="submit" class="btn btn-primary btn-full" id="addToCartBtn">
+            Add to Cart
+          </button>
+          <p class="stock-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/></svg>
+            Secure checkout &nbsp;·&nbsp; Free shipping worldwide
+          </p>
+        </div>
+      </form>
+
+      <!-- PRODUCT DETAILS TABS -->
+      <div class="product-tabs">
+        <div class="tab-buttons">
+          <button class="tab-btn active" data-tab="fabric">Fabric & Technology</button>
+          <button class="tab-btn" data-tab="care">Care Instructions</button>
+          <button class="tab-btn" data-tab="fit">Fit & Sizing</button>
+        </div>
+
+        <div class="tab-content active" id="tab-fabric">
+          <ul class="feature-list">
+            <li>🌿 Sustainably sourced Bamboo / Tencel / Pima Cotton blend</li>
+            <li>🔬 Wrinkle-free technology — stays crisp all day</li>
+            <li>🛡️ Anti-bacterial and anti-odour finish</li>
+            <li>☀️ Anti-UV protection — reduces sun exposure</li>
+            <li>💧 Moisture-wicking — engineered for tropical climates</li>
+          </ul>
+        </div>
+
+        <div class="tab-content" id="tab-care">
+          <ul class="feature-list">
+            <li>🫧 Machine wash cold, gentle cycle</li>
+            <li>🚫 Do not bleach</li>
+            <li>🌬️ Tumble dry low or hang dry</li>
+            <li>♨️ Warm iron if needed (fabric is wrinkle-resistant)</li>
+            <li>🚫 Do not dry clean</li>
+          </ul>
+        </div>
+
+        <div class="tab-content" id="tab-fit">
+          <p style="margin-bottom:1rem;">All measurements are in centimetres. Each piece is sewn individually; slight variations may occur.</p>
+          <table class="size-table">
+            <thead>
+              <tr><th>Size</th><th>Chest</th><th>Shoulder</th><th>Length</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>XS</td><td>88–92</td><td>42</td><td>72</td></tr>
+              <tr><td>S</td><td>92–96</td><td>44</td><td>74</td></tr>
+              <tr><td>M</td><td>96–100</td><td>46</td><td>76</td></tr>
+              <tr><td>L</td><td>100–104</td><td>48</td><td>78</td></tr>
+              <tr><td>XL</td><td>104–108</td><td>50</td><td>80</td></tr>
+              <tr><td>XXL</td><td>108–114</td><td>52</td><td>82</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /.product-detail-layout -->
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // --- Colour swatches ---
+  const swatches = document.querySelectorAll('.colour-swatch');
+  const colourInput = document.getElementById('colourInput');
+  const selectedColour = document.getElementById('selectedColour');
+
+  swatches.forEach(s => {
+    s.addEventListener('click', () => {
+      swatches.forEach(x => x.classList.remove('active'));
+      s.classList.add('active');
+      colourInput.value = s.dataset.colour;
+      selectedColour.textContent = s.dataset.colour;
+    });
+  });
+
+  // --- Size selector ---
+  const sizeBtns = document.querySelectorAll('.size-btn');
+  const sizeInput = document.getElementById('sizeInput');
+  const selectedSize = document.getElementById('selectedSize');
+
+  sizeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      sizeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sizeInput.value = btn.dataset.size;
+      selectedSize.textContent = btn.dataset.size;
+    });
+  });
+
+  // --- Quantity ---
+  const qtyInput = document.getElementById('qtyInput');
+  document.getElementById('qtyMinus').addEventListener('click', () => {
+    if (parseInt(qtyInput.value) > 1) qtyInput.value = parseInt(qtyInput.value) - 1;
+  });
+  document.getElementById('qtyPlus').addEventListener('click', () => {
+    if (parseInt(qtyInput.value) < 10) qtyInput.value = parseInt(qtyInput.value) + 1;
+  });
+
+  // --- Tabs ---
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // --- Validate size on submit ---
+  document.querySelector('.add-to-cart-form').addEventListener('submit', function(e) {
+    if (!sizeInput.value) {
+      e.preventDefault();
+      alert('Please select a size before adding to cart.');
+    }
+  });
+</script>
+{% endblock %}

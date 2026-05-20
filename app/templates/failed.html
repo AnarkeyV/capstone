@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Payment Failed{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="result-page result-page--failed">
+
+    <!-- Icon -->
+    <div class="result-icon result-icon--failed">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+    </div>
+
+    <h1 class="result-title">Payment Unsuccessful</h1>
+    <p class="result-message">
+      We were unable to process your payment. Don't worry — your cart has been saved and no charge was made.
+    </p>
+
+    {% if order_id %}
+      <div class="order-ref order-ref--failed">
+        <span>Reference ID</span>
+        <strong>{{ order_id }}</strong>
+      </div>
+    {% endif %}
+
+    {% if error_message %}
+      <div class="error-detail">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ error_message }}
+      </div>
+    {% endif %}
+
+    <!-- Common reasons -->
+    <div class="result-next-steps">
+      <h2 class="result-section-title">Common reasons for failure</h2>
+      <ul class="failure-reasons">
+        <li>Insufficient funds on card</li>
+        <li>Card details entered incorrectly</li>
+        <li>Card declined by your bank</li>
+        <li>3D Secure / OTP authentication not completed</li>
+        <li>Card not enabled for online transactions</li>
+      </ul>
+    </div>
+
+    <!-- Actions -->
+    <div class="result-actions">
+      <a href="{{ url_for('checkout') }}" class="btn btn-primary">Try Again</a>
+      <a href="{{ url_for('cart') }}" class="btn btn-ghost">Back to Cart</a>
+    </div>
+
+    <p class="result-help">
+      Need help? Email us at <a href="mailto:support@theshirtbar.co">support@theshirtbar.co</a>
+    </p>
+
+  </div>
+</div>
+{% endblock %}
