@@ -34,11 +34,11 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    # 4. Build the Docker image specifically targeting the correct Intel/AMD architecture 
+    # 4. Build the Docker image using the unique GitHub build run number
     - name: Build and Push Docker Image
       run: |
-        docker build --platform linux/amd64 -t capstonereg047af007.azurecr.io/ecommerce-app:v1 -f app/Dockerfile app
-        docker push capstonereg047af007.azurecr.io/ecommerce-app:v1
+        docker build --platform linux/amd64 -t capstonereg047af007.azurecr.io/ecommerce-app:${{ github.run_number }} -f app/Dockerfile app
+        docker push capstonereg047af007.azurecr.io/ecommerce-app:${{ github.run_number }}
 
     # 5. Connect directly to your Azure AKS Cluster using your Kubeconfig token
     - name: Set AKS Context
@@ -47,8 +47,9 @@ jobs:
         method: kubeconfig
         kubeconfig: ${{ secrets.KUBERNETES_KUBECONFIG }}
 
-    # 6. Deploy the corrected YAML files automatically
+    # 6. Dynamically update the image name inside your deployment file before running apply
     - name: Deploy to Kubernetes Cluster
       run: |
+        sed -i 's|image: capstonereg047af007.azurecr.io/ecommerce-app:v1|image: capstonereg047af007.azurecr.io/ecommerce-app:${{ github.run_number }}|g' kubernetes/deployment.yaml
         kubectl apply -f kubernetes/deployment.yaml
         kubectl apply -f kubernetes/service.yaml
