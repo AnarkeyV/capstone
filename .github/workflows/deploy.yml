@@ -37,7 +37,7 @@ jobs:
     # 4. Build the Docker image specifically targeting the correct Intel/AMD architecture 
     - name: Build and Push Docker Image
       run: |
-        docker build --platform linux/amd64 -t capstonereg047af007.azurecr.io/ecommerce-app:v1 .
+        docker build --platform linux/amd64 -t capstonereg047af007.azurecr.io/ecommerce-app:v1 -f app/Dockerfile .
         docker push capstonereg047af007.azurecr.io/ecommerce-app:v1
 
     # 5. Connect directly to your Azure AKS Cluster using your Kubeconfig token
