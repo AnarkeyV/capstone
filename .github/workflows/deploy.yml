@@ -1,0 +1,54 @@
+name: CI/CD Release Pipeline
+
+on:
+  push:
+    branches:
+      - main # Triggers the pipeline anytime code is pushed to main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Pull the latest code down to the GitHub runner
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # 2. Set up Python environment to run tests (Optional but matches 'test' step)
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-backend: '3.10'
+        
+    - name: Install Dependencies & Run Tests
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        # pytest # Uncomment this line if you have written test cases!
+
+    # 3. Log into your Azure Container Registry securely
+    - name: Azure Container Registry Login
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    # 4. Build the Docker image specifically targeting the correct Intel/AMD architecture 
+    - name: Build and Push Docker Image
+      run: |
+        docker build --platform linux/amd64 -t capstonereg047af007.azurecr.io/ecommerce-app:v1 .
+        docker push capstonereg047af007.azurecr.io/ecommerce-app:v1
+
+    # 5. Connect directly to your Azure AKS Cluster using your Kubeconfig token
+    - name: Set AKS Context
+      uses: azure/k8s-set-context@v3
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.KUBERNETES_KUBECONFIG }}
+
+    # 6. Deploy the corrected YAML files automatically
+    - name: Deploy to Kubernetes Cluster
+      run: |
+        kubectl apply -f kubernetes/deployment.yaml
+        kubectl apply -f kubernetes/service.yaml

@@ -14,11 +14,18 @@ spec:
       labels:
         app: capstone
     spec:
+      imagePullSecrets:
+      - name: acr-secret
       containers:
       - name: app
-        image: capstonereg047af007.azurecr.io/capstone-app:v1
+        image: capstonereg047af007.azurecr.io/ecommerce-app:v1
         ports:
         - containerPort: 8000
+
+        envFrom:
+        - secretRef:
+            name: app-secrets
+
         env:
         - name: AZURE_REGION
           value: "southeastasia"
