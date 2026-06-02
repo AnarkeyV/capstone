@@ -1,6 +1,11 @@
 pipeline {
     agent any 
     
+    // 🛠️ Instructs Jenkins to download and provide the standalone Docker CLI tool
+    tools {
+        dockerTool 'docker-cli'
+    }
+
     environment {
         ACR_REGISTRY = 'capstonereg047af007.azurecr.io'
         IMAGE_NAME   = 'ecommerce-app'
@@ -33,9 +38,18 @@ pipeline {
                 withCredentials([string(credentialsId: 'kubeconfig-secret', variable: 'KUBECONFIG_DATA')]) {
                     sh 'echo "$KUBECONFIG_DATA" > kubeconfig.yaml'
                     sh 'sed -i "s|image: ${ACR_REGISTRY}/${IMAGE_NAME}:v1|image: ${ACR_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG}|g" kubernetes/deployment.yaml'
+                    
+                    // Line 1: Downloads the official, tiny Linux-compatible kubectl application file
+                    sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
+
+                    // Line 2: Changes permissions to unlock it so Jenkins has the right to execute it
+                    sh 'chmod +x ./kubectl'
+
                     sh 'kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/deployment.yaml'
                     sh 'kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/service.yaml'
-                    sh 'rm kubeconfig.yaml'
+
+                    // Line 3 (At the very end): Safely deletes it from the folder so our repository stays clean
+                    sh 'rm kubeconfig.yaml ./kubectl'
                 }
             }
         }
