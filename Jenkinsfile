@@ -3,7 +3,7 @@ pipeline {
     
     // 🛠️ This tells Jenkins to inject the docker client tool we just configured
     tools {
-        docker 'docker-cli'
+        dockerTool 'docker-cli'
     }
     
     environment {
