@@ -45,7 +45,7 @@ pipeline {
                     sh './kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/service.yaml'
 
                     // Clean up temporary files
-                    sh 'rm kubeconfig.yaml ./kubectl'
+                    //sh 'rm kubeconfig.yaml ./kubectl'
                 }
             }
         }
