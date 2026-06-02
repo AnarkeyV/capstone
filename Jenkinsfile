@@ -1,7 +1,6 @@
 pipeline {
     agent any 
     
-    // 🛠️ This tells Jenkins to inject the docker client tool we just configured
     tools {
         dockerTool 'docker-cli'
     }
@@ -13,6 +12,14 @@ pipeline {
     }
     
     stages {
+        // 🛠️ FIX: Added this step to bypass the Git 128 security block
+        stage('Fix Git Permissions') {
+            steps {
+                sh 'git config --global --add safe.directory /var/jenkins_home/workspace/capstone-ecommerce-pipeline'
+                sh 'git config --global --add safe.directory /var/jenkins_home/workspace/capstone-ecommerce-pipeline@tmp'
+            }
+        }
+
         stage('Checkout Code') {
             steps {
                 checkout scm
@@ -22,7 +29,6 @@ pipeline {
         stage('Docker Login & Build') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'acr-credentials', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASS')]) {
-                    // Using single quotes around the shell command prevents the Groovy security warning!
                     sh 'docker login ${ACR_REGISTRY} -u ${ACR_USER} -p ${ACR_PASS}'
                     sh 'docker build --platform linux/amd64 -t ${ACR_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG} -f app/Dockerfile app'
                     sh 'docker push ${ACR_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG}'
