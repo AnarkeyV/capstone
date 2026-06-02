@@ -31,7 +31,8 @@ pipeline {
         stage('Deploy to AKS') {
             steps {
                 withCredentials([string(credentialsId: 'kubeconfig-secret', variable: 'KUBECONFIG_DATA')]) {
-                    sh 'echo "$KUBECONFIG_DATA" > kubeconfig.yaml'
+                    // Write kubeconfig safely with preserved newlines
+                    sh 'printf "%s" "$KUBECONFIG_DATA" > kubeconfig.yaml'
                     sh 'sed -i "s|image: ${ACR_REGISTRY}/${IMAGE_NAME}:v1|image: ${ACR_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG}|g" kubernetes/deployment.yaml'
 
                     // Download kubectl
