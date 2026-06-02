@@ -1,10 +1,5 @@
 pipeline {
     agent any 
-    
-    // 🛠️ Instructs Jenkins to download and provide the standalone Docker CLI tool
-    tools {
-        dockerTool 'docker-cli'
-    }
 
     environment {
         ACR_REGISTRY = 'capstonereg047af007.azurecr.io'
@@ -13,6 +8,13 @@ pipeline {
     }
     
     stages {
+        // 🛠️ NEW STAGE: Installs the modern Docker CLI directly into the runner environment
+        stage('Install Modern Docker CLI') {
+            steps {
+                sh 'apt-get update && apt-get install -y docker.io'
+            }
+        }
+        
         stage('Checkout Code') {
             steps {
                 checkout([$class: 'GitSCM',
@@ -38,17 +40,17 @@ pipeline {
                 withCredentials([string(credentialsId: 'kubeconfig-secret', variable: 'KUBECONFIG_DATA')]) {
                     sh 'echo "$KUBECONFIG_DATA" > kubeconfig.yaml'
                     sh 'sed -i "s|image: ${ACR_REGISTRY}/${IMAGE_NAME}:v1|image: ${ACR_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG}|g" kubernetes/deployment.yaml'
-                    
-                    // Line 1: Downloads the official, tiny Linux-compatible kubectl application file
+
+                    // Downloads the official, tiny Linux-compatible kubectl application file
                     sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
 
-                    // Line 2: Changes permissions to unlock it so Jenkins has the right to execute it
+                    // Changes permissions so Jenkins can execute it
                     sh 'chmod +x ./kubectl'
 
-                    sh 'kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/deployment.yaml'
-                    sh 'kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/service.yaml'
+                    sh './kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/deployment.yaml'
+                    sh './kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/service.yaml'
 
-                    // Line 3 (At the very end): Safely deletes it from the folder so our repository stays clean
+                    // Safely deletes temporary files
                     sh 'rm kubeconfig.yaml ./kubectl'
                 }
             }
