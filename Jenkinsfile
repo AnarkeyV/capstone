@@ -13,6 +13,8 @@ pipeline {
                 checkout([$class: 'GitSCM',
                           branches: [[name: '*/main']],
                           userRemoteConfigs: [[url: 'https://github.com/AnarkeyV/capstone.git']]])
+                
+                // Verify git is working
                 sh 'ls -a'
                 sh 'git status'
             }
@@ -21,6 +23,11 @@ pipeline {
         stage('Docker Login & Build') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'acr-credentials', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASS')]) {
+                    
+                    // Verify docker
+                    sh 'docker version'
+                    
+                    // docker login, build and push to ACR'
                     sh 'docker login ${ACR_REGISTRY} -u ${ACR_USER} -p ${ACR_PASS}'
                     sh 'docker build --platform linux/amd64 -t ${ACR_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG} -f app/Dockerfile app'
                     sh 'docker push ${ACR_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG}'
@@ -44,8 +51,10 @@ pipeline {
 
                     sh './kubectl apply --kubeconfig=$KUBECONFIG_FILE -f kubernetes/deployment.yaml'
                     sh './kubectl apply --kubeconfig=$KUBECONFIG_FILE -f kubernetes/service.yaml'
-                    // sh './kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/deployment.yaml'
-                    // sh './kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/service.yaml'
+                    
+                    // Show kubectl version and client
+                    sh 'kubectl version --client'
+                    sh 'which kubectl'
 
                     // Clean up temporary files
                     sh 'rm ./kubectl'
