@@ -1,0 +1,28 @@
+---
+- name: The Shirt Bar deployment health check
+  hosts: local
+  gather_facts: false
+
+  vars:
+    app_url: "http://20.184.58.23"
+
+  tasks:
+    - name: Show target website URL
+      ansible.builtin.debug:
+        msg: "Checking website at {{ app_url }}"
+
+    - name: Check if website is reachable
+      ansible.builtin.uri:
+        url: "{{ app_url }}"
+        method: GET
+        return_content: false
+        status_code:
+          - 200
+          - 301
+          - 302
+        timeout: 15
+      register: website_check
+
+    - name: Show website check result
+      ansible.builtin.debug:
+        msg: "Website responded with HTTP status {{ website_check.status }}"
