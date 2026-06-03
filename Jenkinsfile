@@ -39,6 +39,9 @@ pipeline {
                     // Make kubectl executable
                     sh 'chmod +x ./kubectl'
 
+                    // Debug: check cluster connectivity
+                    sh './kubectl cluster-info --kubeconfig=$KUBECONFIG_FILE'
+
                     sh './kubectl apply --kubeconfig=$KUBECONFIG_FILE -f kubernetes/deployment.yaml'
                     sh './kubectl apply --kubeconfig=$KUBECONFIG_FILE -f kubernetes/service.yaml'
                     // sh './kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/deployment.yaml'
