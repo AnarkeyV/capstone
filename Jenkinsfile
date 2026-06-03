@@ -30,22 +30,22 @@ pipeline {
 
         stage('Deploy to AKS') {
             steps {
-                withCredentials([string(credentialsId: 'kubeconfig-secret', variable: 'KUBECONFIG_DATA')]) {
-                    // Write kubeconfig safely with preserved newlines
-                    sh 'printf "%s" "$KUBECONFIG_DATA" > kubeconfig.yaml'
-                    sh 'sed -i "s|image: ${ACR_REGISTRY}/${IMAGE_NAME}:v1|image: ${ACR_REGISTRY}/${IMAGE_NAME}:${VERSION_TAG}|g" kubernetes/deployment.yaml'
+                // Use Secret File credential instead of String
+                withCredentials([file(credentialsId: 'kubeconfig-secret', variable: 'KUBECONFIG_FILE')]) {
 
                     // Download kubectl
                     sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
-
+                    
                     // Make kubectl executable
                     sh 'chmod +x ./kubectl'
 
-                    sh './kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/deployment.yaml'
-                    sh './kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/service.yaml'
+                    sh './kubectl apply --kubeconfig=$KUBECONFIG_FILE -f kubernetes/deployment.yaml'
+                    sh './kubectl apply --kubeconfig=$KUBECONFIG_FILE -f kubernetes/service.yaml'
+                    // sh './kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/deployment.yaml'
+                    // sh './kubectl apply --kubeconfig=kubeconfig.yaml -f kubernetes/service.yaml'
 
                     // Clean up temporary files
-                    //sh 'rm kubeconfig.yaml ./kubectl'
+                    sh 'rm ./kubectl'
                 }
             }
         }
