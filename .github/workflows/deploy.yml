@@ -3,57 +3,58 @@ name: CI/CD Release Pipeline
 on:
   push:
     branches:
-      - main # Triggers the pipeline anytime code is pushed to main
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Pull the latest code down to the GitHub runner
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      # 1. Pull the latest code down to the GitHub runner
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    # 2. Set up Python environment to run tests (Optional but matches 'test' step)
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-backend: '3.10'
-        
-    - name: Install Dependencies & Run Tests
-      run: |
-        python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # pytest # To uncomment this line if we have written test cases.
+      # 2. Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-    # 3. Log into your Azure Container Registry securely
-    - name: Azure Container Registry Login
-      uses: azure/docker-login@v1
-      with:
-        login-server: ${{ secrets.ACR_LOGIN_SERVER }}
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+      - name: Install Dependencies & Run Tests
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f app/requirements.txt ]; then pip install -r app/requirements.txt; fi
+          # pytest
 
-    # 4. Build the Docker image using a 'v' prefixed run number
-    - name: Build and Push Docker Image
-      run: |
-        # Add a version to ${{ github.run_number }}
-        docker build --platform linux/amd64 -t capstonereg047af007.azurecr.io/ecommerce-app:v${{ github.run_number }} -f app/Dockerfile app
-        
-        # Add a version to :v${{ github.run_number }}
-        docker push capstonereg047af007.azurecr.io/ecommerce-app:v${{ github.run_number }}
+      # 3. Log into Azure Container Registry
+      - name: Azure Container Registry Login
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
 
-    # 5. Connect directly to our Azure AKS Cluster using our Kubeconfig token
-    - name: Set AKS Context
-      uses: azure/k8s-set-context@v3
-      with:
-        method: kubeconfig
-        kubeconfig: ${{ secrets.KUBERNETES_KUBECONFIG }}
+      # 4. Build and push Docker image
+      - name: Build and Push Docker Image
+        run: |
+          docker build --platform linux/amd64 \
+            -t ${{ secrets.ACR_LOGIN_SERVER }}/ecommerce-app:v${{ github.run_number }} \
+            -f app/Dockerfile .
 
-    # 6. Dynamically update the image name inside our deployment file before running apply
-    - name: Deploy to Kubernetes Cluster
-      run: |
-        # Add a version to :v${{ github.run_number }} in the replacement pattern
-        sed -i 's|image: capstonereg047af007.azurecr.io/ecommerce-app:v1|image: capstonereg047af007.azurecr.io/ecommerce-app:v${{ github.run_number }}|g' kubernetes/deployment.yaml
-        kubectl apply -f kubernetes/deployment.yaml
-        kubectl apply -f kubernetes/service.yaml
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/ecommerce-app:v${{ github.run_number }}
+
+      # 5. Connect to AKS
+      - name: Set AKS Context
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBERNETES_KUBECONFIG }}
+
+      # 6. Deploy to Kubernetes
+      - name: Deploy to Kubernetes Cluster
+        run: |
+          sed -i 's|image: .*/ecommerce-app:v[0-9]*|image: ${{ secrets.ACR_LOGIN_SERVER }}/ecommerce-app:v${{ github.run_number }}|g' kubernetes/deployment.yaml
+
+          kubectl apply -f kubernetes/deployment.yaml
+          kubectl apply -f kubernetes/service.yaml
+          kubectl rollout status deployment/capstone-app
