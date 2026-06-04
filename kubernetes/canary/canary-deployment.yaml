@@ -20,11 +20,9 @@ spec:
         version: canary
         environment: staging
     spec:
-      imagePullSecrets:
-      - name: acr-secret
       containers:
       - name: app
-        image: capstonereg047af007.azurecr.io/ecommerce-app:v23
+        image: capstonetfacr047af007.azurecr.io/ecommerce-app:v23
         ports:
         - containerPort: 8000
 
