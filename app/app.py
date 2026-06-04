@@ -20,6 +20,10 @@ def create_app():
     app.register_blueprint(cart_bp)
     app.register_blueprint(checkout_bp)
 
+    @app.route("/health")
+    def health():
+        return {"status": "ok"}, 200
+
     @app.context_processor
     def inject_cart_count():
         from flask import session

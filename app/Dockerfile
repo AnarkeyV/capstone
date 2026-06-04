@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
 LABEL maintainer="khairul@example.com"
-LABEL description="Capstone application container"
+LABEL description="The Shirt Bar Flask e-commerce application container"
 
 # Install Microsoft ODBC Driver 18 for SQL Server (required by pyodbc)
 RUN apt-get update \
@@ -12,16 +12,16 @@ RUN apt-get update \
     && ACCEPT_EULA=Y apt-get install -y msodbcsql18 unixodbc-dev \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+WORKDIR /workspace
 
-COPY requirements.txt .
+COPY app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY app ./app
 
 RUN adduser --disabled-password --gecos "" appuser
 USER appuser
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "src.app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "app.app:create_app()"]
