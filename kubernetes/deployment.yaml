@@ -18,7 +18,7 @@ spec:
       - name: acr-secret
       containers:
       - name: app
-        image: capstonereg047af007.azurecr.io/ecommerce-app:v1
+        image: capstonereg047af007.azurecr.io/ecommerce-app:v23
         ports:
         - containerPort: 8000
 
