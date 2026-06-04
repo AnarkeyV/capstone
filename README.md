@@ -263,6 +263,44 @@ http://localhost:5001
 
 ---
 
+## ✅ Automated Testing
+
+Automated route tests were added using `pytest`.
+
+The test files are located in:
+
+```text
+tests/
+├── conftest.py
+└── test_app_routes.py
+```
+
+The current tests validate that these key routes load successfully:
+
+| Test | Route | Expected |
+|---|---|---|
+| Health check | `/health` | `200 OK` and `{"status": "ok"}` |
+| Homepage | `/` | `200 OK` and The Shirt Bar content |
+| Product detail page | `/product/TSHIRT-001` | `200 OK` and product content |
+| Cart page | `/cart` | `200 OK` and cart content |
+
+Run tests locally:
+
+```bash
+python -m pytest
+```
+
+Expected output:
+
+```text
+4 passed
+```
+
+These tests are also executed inside the GitHub Actions pipeline before the Docker image is built and pushed.
+
+
+---
+
 ## 🐳 Docker Build and Local Test
 
 The Dockerfile is located at:
@@ -365,7 +403,8 @@ The CI/CD workflow performs:
 1. Checkout code
 2. Set up Python
 3. Install dependencies
-4. Login to Azure Container Registry
+4. Run pytest route tests
+5. Login to Azure Container Registry
 5. Build Docker image for Linux AMD64
 6. Push Docker image to ACR
 7. Set AKS context
@@ -392,6 +431,55 @@ The final `.` is important because the Docker build context must be the reposito
 | `KUBERNETES_KUBECONFIG` | AKS kubeconfig for deployment |
 
 > The AKS cluster must be running before the GitHub Actions deployment step can reach the Kubernetes API server.
+
+---
+
+## ⚠️ Important CI/CD Note: AKS Must Be Running for Deployment
+
+The GitHub Actions workflow has two major parts:
+
+1. **CI checks** — install dependencies, run tests, build the Docker image, and push the image to ACR.
+2. **CD deployment** — connect to AKS and apply the Kubernetes deployment.
+
+If AKS is intentionally stopped for cost control, the CI stages can still pass, but the Kubernetes deployment stage may fail because GitHub Actions cannot reach the AKS API server.
+
+This does **not** necessarily mean the code, tests, Docker image, or pipeline build is broken.
+
+Expected situation when AKS is stopped:
+
+| Pipeline Stage | Expected Result |
+|---|---|
+| Install Dependencies & Run Tests | Pass |
+| Build and Push Docker Image | Pass |
+| Set AKS Context | May pass |
+| Deploy to Kubernetes Cluster | May fail because AKS is stopped |
+
+To run a fully green deployment pipeline:
+
+```bash
+az aks start --resource-group rg-capstone --name capstone-aks
+```
+
+Confirm AKS is running:
+
+```bash
+az aks show --resource-group rg-capstone --name capstone-aks --query "powerState.code" -o tsv
+```
+
+Expected output:
+
+```text
+Running
+```
+
+Then re-run the GitHub Actions workflow.
+
+After the team has finished verification or demo testing, stop AKS again:
+
+```bash
+az aks stop --resource-group rg-capstone --name capstone-aks
+```
+
 
 ---
 
