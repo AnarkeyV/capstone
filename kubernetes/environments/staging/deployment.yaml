@@ -2,17 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: capstone-app
+  namespace: staging
   labels:
     app: capstone
+    environment: staging
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: capstone
+      environment: staging
   template:
     metadata:
       labels:
         app: capstone
+        environment: staging
     spec:
       containers:
       - name: app
@@ -27,6 +31,9 @@ spec:
         env:
         - name: AZURE_REGION
           value: "southeastasia"
+        - name: APP_ENVIRONMENT
+          value: "staging"
+
         resources:
           requests:
             memory: "128Mi"
@@ -34,12 +41,14 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "250m"
+
         livenessProbe:
           httpGet:
             path: /health
             port: 8000
           initialDelaySeconds: 10
           periodSeconds: 10
+
         readinessProbe:
           httpGet:
             path: /health

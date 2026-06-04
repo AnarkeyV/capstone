@@ -1,18 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: capstone-app
+  name: capstone-app-stable
+  namespace: staging
   labels:
-    app: capstone
+    app: capstone-canary-demo
+    version: stable
+    environment: staging
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: capstone
+      app: capstone-canary-demo
+      version: stable
   template:
     metadata:
       labels:
-        app: capstone
+        app: capstone-canary-demo
+        version: stable
+        environment: staging
     spec:
       containers:
       - name: app
@@ -27,6 +33,11 @@ spec:
         env:
         - name: AZURE_REGION
           value: "southeastasia"
+        - name: APP_ENVIRONMENT
+          value: "staging"
+        - name: RELEASE_VERSION
+          value: "stable"
+
         resources:
           requests:
             memory: "128Mi"
@@ -34,12 +45,14 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "250m"
+
         livenessProbe:
           httpGet:
             path: /health
             port: 8000
           initialDelaySeconds: 10
           periodSeconds: 10
+
         readinessProbe:
           httpGet:
             path: /health

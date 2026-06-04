@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: capstone-service
+  namespace: production
+  labels:
+    app: capstone
+    environment: production
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: capstone
+    environment: production

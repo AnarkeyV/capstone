@@ -1,0 +1,76 @@
+// AKS Monitoring Queries for The Shirt Bar Capstone
+// Use these queries in Azure Log Analytics after AKS monitoring is connected.
+
+// --------------------------------------------------
+// 1. Recent Kubernetes warning events
+// --------------------------------------------------
+KubeEvents
+| where TimeGenerated > ago(24h)
+| where Type == "Warning"
+| project TimeGenerated, Namespace, Name, Reason, Message
+| order by TimeGenerated desc
+
+// --------------------------------------------------
+// 2. Pod status by namespace
+// --------------------------------------------------
+KubePodInventory
+| where TimeGenerated > ago(1h)
+| summarize LatestStatus = arg_max(TimeGenerated, PodStatus) by Namespace, Name
+| project Namespace, PodName = Name, PodStatus = LatestStatus
+| order by Namespace asc, PodName asc
+
+// --------------------------------------------------
+// 3. Pods that are not running
+// --------------------------------------------------
+KubePodInventory
+| where TimeGenerated > ago(1h)
+| summarize LatestStatus = arg_max(TimeGenerated, PodStatus) by Namespace, Name
+| where LatestStatus != "Running"
+| project Namespace, PodName = Name, PodStatus = LatestStatus
+
+// --------------------------------------------------
+// 4. Container restarts
+// --------------------------------------------------
+KubePodInventory
+| where TimeGenerated > ago(24h)
+| summarize RestartCount = max(ContainerRestartCount) by Namespace, PodName = Name, ContainerName
+| where RestartCount > 0
+| order by RestartCount desc
+
+// --------------------------------------------------
+// 5. CPU usage by container
+// --------------------------------------------------
+Perf
+| where TimeGenerated > ago(1h)
+| where ObjectName == "K8SContainer"
+| where CounterName == "cpuUsageNanoCores"
+| summarize AvgCpuNanoCores = avg(CounterValue) by InstanceName, bin(TimeGenerated, 5m)
+| order by TimeGenerated desc
+
+// --------------------------------------------------
+// 6. Memory usage by container
+// --------------------------------------------------
+Perf
+| where TimeGenerated > ago(1h)
+| where ObjectName == "K8SContainer"
+| where CounterName == "memoryWorkingSetBytes"
+| summarize AvgMemoryBytes = avg(CounterValue) by InstanceName, bin(TimeGenerated, 5m)
+| order by TimeGenerated desc
+
+// --------------------------------------------------
+// 7. Node readiness
+// --------------------------------------------------
+KubeNodeInventory
+| where TimeGenerated > ago(1h)
+| summarize Latest = arg_max(TimeGenerated, Status) by Computer
+| project Node = Computer, Status = Latest
+
+// --------------------------------------------------
+// 8. Capstone app pods only
+// --------------------------------------------------
+KubePodInventory
+| where TimeGenerated > ago(1h)
+| where Name contains "capstone"
+| summarize LatestStatus = arg_max(TimeGenerated, PodStatus) by Namespace, Name
+| project Namespace, PodName = Name, PodStatus = LatestStatus
+| order by TimeGenerated desc
