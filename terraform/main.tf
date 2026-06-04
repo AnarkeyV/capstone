@@ -1,50 +1,52 @@
-# ============================================
-# TERRAFORM CONFIGURATION
-# ============================================
-
 terraform {
-  required_version = ">= 1.0"
+  required_version = ">= 1.6.0"
 
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.0"
+      version = "~> 3.110"
     }
   }
 }
-
-# ============================================
-# PROVIDER CONFIGURATION
-# ============================================
 
 provider "azurerm" {
   features {}
 }
 
-# ============================================
-# RESOURCE GROUP
-# ============================================
+# -------------------------------------------------------------------
+# The Shirt Bar Capstone - Terraform Reference
+# -------------------------------------------------------------------
+# This Terraform configuration is intentionally written as a SAFE
+# reference configuration.
+#
+# It uses data sources to read existing Azure resources instead of
+# creating or modifying resources.
+#
+# Do not run terraform apply before reviewing the configuration with
+# the team and lecturer.
+# -------------------------------------------------------------------
 
-resource "azurerm_resource_group" "capstone" {
-  name     = var.resource_group_name
-  location = var.location
-
-  tags = {
-    Project = var.project_name
-    Owner   = var.owner_name
-  }
+data "azurerm_resource_group" "capstone" {
+  name = var.resource_group_name
 }
 
-# ============================================
-# OUTPUTS
-# ============================================
-
-output "resource_group_name" {
-  value       = azurerm_resource_group.capstone.name
-  description = "The name of the resource group containing all resources"
+data "azurerm_container_registry" "capstone" {
+  name                = var.acr_name
+  resource_group_name = data.azurerm_resource_group.capstone.name
 }
 
-output "resource_group_location" {
-  value       = azurerm_resource_group.capstone.location
-  description = "The Azure region where resources are deployed"
+data "azurerm_kubernetes_cluster" "capstone" {
+  name                = var.aks_cluster_name
+  resource_group_name = data.azurerm_resource_group.capstone.name
 }
+
+# Optional future production resources can be added later, such as:
+#
+# - Azure Storage Account for product images
+# - Azure Key Vault for application secrets
+# - Azure Monitor / Log Analytics Workspace
+# - Azure Application Gateway or Ingress Controller
+# - Separate dev, staging, and production environments
+#
+# For this capstone, the file is used to demonstrate Infrastructure
+# as Code structure without risking changes to the working Azure setup.
