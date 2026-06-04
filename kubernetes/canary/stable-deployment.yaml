@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capstone-app-stable
+  namespace: staging
+  labels:
+    app: capstone-canary-demo
+    version: stable
+    environment: staging
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: capstone-canary-demo
+      version: stable
+  template:
+    metadata:
+      labels:
+        app: capstone-canary-demo
+        version: stable
+        environment: staging
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: app
+        image: capstonereg047af007.azurecr.io/ecommerce-app:v23
+        ports:
+        - containerPort: 8000
+
+        envFrom:
+        - secretRef:
+            name: app-secrets
+
+        env:
+        - name: AZURE_REGION
+          value: "southeastasia"
+        - name: APP_ENVIRONMENT
+          value: "staging"
+        - name: RELEASE_VERSION
+          value: "stable"
+
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
