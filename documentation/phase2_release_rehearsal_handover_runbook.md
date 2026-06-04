@@ -545,3 +545,23 @@ The team should resolve or explain this before final presentation day.
 
 Prepared by: Khairul Rizal  
 Status: Updated after P10 and rehearsal check — issue documented
+
+---
+
+## Final Release Rehearsal Result — Full Shop Deployment Fixed
+
+Date: 4 June 2026
+
+The release rehearsal was re-tested after fixing the Docker image and Kubernetes deployment.
+
+Final confirmed result:
+
+- AKS image used: `capstonereg047af007.azurecr.io/ecommerce-app:v23`
+- Public service IP: `20.184.58.23`
+- Homepage `/`: `200 OK`
+- Health check `/health`: `200 OK`
+- Product detail `/product/TSHIRT-001`: `200 OK`
+- Pod status: `1/1 Running`
+- AKS was stopped after testing to reduce cost.
+
+The full The Shirt Bar shop application is now successfully deployed on AKS.
