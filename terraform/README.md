@@ -1,61 +1,66 @@
-# Terraform Infrastructure Reference
+# Terraform Infrastructure
 
-This folder contains a safe Terraform reference for The Shirt Bar capstone project.
+This folder contains Terraform configuration for The Shirt Bar capstone infrastructure.
 
-The purpose is to show how the project can move toward **Infrastructure as Code (IaC)** without risking the existing working Azure deployment before final presentation.
+This version moves beyond reference-only Terraform by defining actual Azure resources for a future staging-style environment.
 
 ---
 
-## 1. Important Safety Note
+## 1. Safety Note
 
-This Terraform setup is intentionally written to read existing Azure resources using `data` sources.
+Do not run `terraform apply` until the team has reviewed the Terraform plan.
 
-It does **not** create, update, or delete Azure resources.
-
-Do not run:
+Start with:
 
 ```bash
-terraform apply
+terraform init
+terraform fmt
+terraform validate
+terraform plan
 ```
 
-unless the team has reviewed the configuration and agreed to manage Azure infrastructure through Terraform.
+Only proceed to `terraform apply` after checking the plan carefully.
 
 ---
 
-## 2. Current Files
+## 2. What This Terraform Creates
+
+This Terraform configuration defines:
+
+| Resource | Purpose |
+|---|---|
+| Azure Resource Group | Container for the future Terraform-managed environment |
+| Azure Container Registry | Stores Docker images |
+| Azure Kubernetes Service | Runs the Flask e-commerce application |
+| Log Analytics Workspace | Stores AKS monitoring logs and metrics |
+| AKS OMS Agent | Connects AKS to Log Analytics |
+| Storage Account | Future product image storage |
+| Blob Container | Future `product-images` container |
+| AcrPull Role Assignment | Allows AKS to pull images from ACR |
+
+---
+
+## 3. Why This Uses New Resource Names
+
+The existing working Azure resources should not be modified suddenly before final review.
+
+This Terraform version uses separate default names such as:
 
 ```text
-terraform/
-├── main.tf
-├── variables.tf
-├── outputs.tf
-└── README.md
+rg-capstone-tf-staging
+capstone-aks-tf-staging
+capstonetfacr047af007
+law-capstone-tf-staging
+tsbproductimg047af007
 ```
 
-| File | Purpose |
-|---|---|
-| `main.tf` | Configures the AzureRM provider and reads existing Azure resources |
-| `variables.tf` | Stores project names and Azure resource names |
-| `outputs.tf` | Displays useful information about the existing Azure resources |
-| `README.md` | Explains how and why Terraform is included |
+This avoids accidentally changing the existing working AKS deployment.
 
 ---
 
-## 3. Existing Azure Resources Referenced
+## 4. Commands
 
-This Terraform reference reads the following existing resources:
-
-| Resource | Name |
-|---|---|
-| Resource Group | `rg-capstone` |
-| Azure Container Registry | `capstonereg047af007` |
-| Azure Kubernetes Service | `capstone-aks` |
-
----
-
-## 4. Setup Commands
-
-From the repository root:
+Go into the Terraform folder:
 
 ```bash
 cd terraform
@@ -67,87 +72,48 @@ Initialise Terraform:
 terraform init
 ```
 
-Format the files:
+Format files:
 
 ```bash
 terraform fmt
 ```
 
-Validate syntax:
+Validate files:
 
 ```bash
 terraform validate
 ```
 
-Preview what Terraform can read:
+Preview the plan:
 
 ```bash
 terraform plan
 ```
 
-Because this folder uses only data sources, the plan should not show new Azure resources being created.
+Return to repo root:
 
----
-
-## 5. Why Terraform Is Useful
-
-Terraform is useful because it allows cloud infrastructure to be written as code.
-
-For this project, Terraform can eventually help the team manage:
-
-- Resource Groups
-- Azure Container Registry
-- Azure Kubernetes Service
-- Azure SQL Database
-- Azure Storage Account
-- Azure Key Vault
-- Monitoring resources
-- Staging and production environments
-
----
-
-## 6. Why This Is Reference-Only for Now
-
-The current Azure deployment is already working.
-
-Changing live infrastructure before final presentation may create unnecessary risk, such as:
-
-- Accidentally replacing resources
-- Changing AKS settings
-- Breaking GitHub Actions deployment
-- Creating additional Azure cost
-- Introducing state-management problems
-
-For this reason, Terraform is included as a safe reference and future improvement.
-
----
-
-## 7. Future Terraform Roadmap
-
-Recommended future order:
-
-1. Import existing Azure resources into Terraform state.
-2. Store Terraform state remotely in Azure Storage.
-3. Add Azure Storage Account for product images.
-4. Add Key Vault for secrets.
-5. Add Log Analytics and monitoring resources.
-6. Add staging and production environments.
-7. Add CI/CD workflow for Terraform plan review.
-
----
-
-## 8. Presentation Explanation
-
-Use this explanation during the final presentation:
-
-```text
-We added a Terraform folder to show how the project can move toward Infrastructure as Code. For safety, it currently reads existing Azure resources instead of changing them. This lets us demonstrate Terraform structure and future readiness without risking the working AKS deployment before presentation.
+```bash
+cd ..
 ```
 
 ---
 
-## 9. Final Recommendation
+## 5. Important Cost Warning
 
-Terraform should be implemented gradually after the current application deployment and handover process are stable.
+Creating AKS and Log Analytics resources may create Azure cost.
 
-The next safe step would be to import existing Azure resources into Terraform state and store that state securely in Azure Storage.
+Only run `terraform apply` after the team agrees and understands the cost impact.
+
+---
+
+## 6. Future Improvements
+
+After this Terraform structure is reviewed, the team can later add:
+
+- Azure SQL Database
+- Azure Key Vault
+- Azure Monitor dashboard resources
+- Kubernetes namespaces
+- Ingress controller
+- Staging and production variable files
+- Remote Terraform state in Azure Storage
