@@ -72,10 +72,18 @@ resource "azurerm_kubernetes_cluster" "capstone" {
   dns_prefix          = var.aks_dns_prefix
   kubernetes_version  = var.kubernetes_version
 
+  # Keeps Terraform aligned with the current live AKS configuration.
+  oidc_issuer_enabled = true
+
   default_node_pool {
     name       = "system"
     node_count = var.aks_node_count
     vm_size    = var.aks_node_vm_size
+
+    # Keeps Terraform aligned with the current live AKS node pool upgrade setting.
+    upgrade_settings {
+      max_surge = "10%"
+    }
   }
 
   identity {

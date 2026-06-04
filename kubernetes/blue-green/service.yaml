@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: capstone-blue-green-service
+  namespace: staging
+  labels:
+    app: capstone-blue-green-demo
+spec:
+  type: ClusterIP
+  selector:
+    app: capstone-blue-green-demo
+    version: blue
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+      
