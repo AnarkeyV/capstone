@@ -3,6 +3,7 @@
 [![Flask](https://img.shields.io/badge/flask-ecommerce-green.svg)](https://flask.palletsprojects.com/)
 [![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
 [![Azure](https://img.shields.io/badge/Azure-AKS%20%7C%20ACR%20%7C%20SQL-0078D4.svg)](https://azure.microsoft.com/)
+[![GCP](https://img.shields.io/badge/Google%20Cloud-Cloud%20Run%20Showcase-4285F4.svg)](https://cloud.google.com/run)
 [![Terraform](https://img.shields.io/badge/terraform-remote%20state%20%7C%20staging-7B42BC.svg)](https://www.terraform.io/)
 [![Kubernetes](https://img.shields.io/badge/kubernetes-staging%20%7C%20canary%20%7C%20blue--green-326CE5.svg)](https://kubernetes.io/)
 [![Status](https://img.shields.io/badge/project-final%20improvements%20validated-success.svg)](#current-project-status)
@@ -11,7 +12,7 @@
 
 A cloud-native e-commerce platform for **The Shirt Bar**, a premium sustainable menswear brand based in Singapore.
 
-This project demonstrates how a Flask-based online shop can be containerised with Docker, pushed to Azure Container Registry, deployed to Azure Kubernetes Service, prepared with Azure SQL Database support, automated through GitHub Actions, and extended with Terraform-managed staging infrastructure, monitoring assets, canary deployment automation, and blue-green deployment comparison.
+This project demonstrates how a Flask-based online shop can be containerised with Docker, pushed to Azure Container Registry, deployed to Azure Kubernetes Service, prepared with Azure SQL Database support, automated through GitHub Actions, and extended with Terraform-managed staging infrastructure, monitoring assets, canary deployment automation, blue-green deployment comparison, and a separate Google Cloud Run backup-cloud proof of concept.
 
 ---
 
@@ -38,6 +39,7 @@ This project demonstrates how a Flask-based online shop can be containerised wit
 - [GitHub Actions CI/CD](#github-actions-cicd)
 - [Azure SQL Databases](#azure-sql-databases)
 - [Release Rehearsal Result](#release-rehearsal-result)
+- [GCP Cloud Run Backup-Cloud Showcase](#gcp-cloud-run-backup-cloud-showcase)
 - [Cost Control](#cost-control)
 - [Known Limitation: Azure Public IP Quota](#known-limitation-azure-public-ip-quota)
 - [Project Structure](#project-structure)
@@ -66,9 +68,10 @@ The project has completed the original release rehearsal and has now been extend
 | Canary deployment strategy | Tested successfully |
 | Automated canary promotion and rollback scripts | Added and tested |
 | Blue-green deployment strategy example | Added and tested |
+| GCP Cloud Run backup-cloud showcase | Completed and screenshot evidence captured |
 | Monitoring dashboard package | Added |
-| Current working branch | `infra-final-improvements` |
-| Documentation status | Updated for final improvements |
+| Current working branch | `main` |
+| Documentation status | Updated on `main` after final improvements were merged |
 
 ---
 
@@ -140,6 +143,7 @@ The project focuses on:
 - Adding monitoring dashboard documentation/assets
 - Documenting release rehearsal and handover steps
 - Applying cost-control practices by stopping AKS after testing
+- Demonstrating backup-cloud portability using Google Cloud Run
 
 ---
 
@@ -163,6 +167,7 @@ The project focuses on:
 | **Monitoring Package** | Monitoring dashboard package added for operational visibility |
 | **CI/CD Workflow** | GitHub Actions builds, tests, pushes, and deploys the app |
 | **Release Runbook** | Handover and release rehearsal documented for team use |
+| **GCP Cloud Run Showcase** | Same Dockerised Flask app deployed to Google Cloud Run as a backup-cloud proof of concept |
 
 ---
 
@@ -256,7 +261,8 @@ The project focuses on:
 | Deployment | Kubernetes YAML |
 | Deployment Strategies | Canary, Blue-Green |
 | Monitoring | Monitoring dashboard package, KQL query files |
-| Cloud Platform | Microsoft Azure |
+| Primary Cloud Platform | Microsoft Azure |
+| Backup-Cloud Showcase | Google Cloud Run and Google Artifact Registry |
 | Payment Integration | Stripe Test Mode |
 | Documentation | Markdown, Runbooks, Playbooks |
 
@@ -981,9 +987,46 @@ documentation/phase2_release_rehearsal_handover_runbook.md
 
 ---
 
+## 🌥️ GCP Cloud Run Backup-Cloud Showcase
+
+In addition to the main Azure AKS deployment, this project includes a separate Google Cloud Platform proof of concept.
+
+The same Dockerised Flask e-commerce application was pushed to Google Artifact Registry and deployed to Google Cloud Run. This demonstrates that the application is portable across cloud providers because it is packaged as a container.
+
+This GCP deployment is **not** a full disaster recovery setup. It is a backup-cloud proof of concept used to show that the application can run outside Azure with minimal changes. A complete disaster recovery setup would also require database replication, DNS failover, secrets management, monitoring, alerting, recovery time planning, and recovery point planning.
+
+| Item | Value |
+|---|---|
+| **GCP Project** | `The Shirt Bar GCP Showcase` |
+| **Project ID** | `shirtbar-gcp-showcase-khairul` |
+| **Region** | `asia-southeast1` |
+| **Container Registry** | Google Artifact Registry |
+| **Runtime Platform** | Google Cloud Run |
+| **Service Name** | `shirtbar-cloudrun-showcase` |
+| **Docker Image** | `ecommerce-app:gcp-demo-v1` |
+| **Cost Control** | Budget alert created and Cloud Run service removed after screenshot evidence |
+
+Full walkthrough and screenshot evidence are documented separately here:
+
+[docs/gcp-cloud-run-showcase.md](docs/gcp-cloud-run-showcase.md)
+
+### Presentation summary
+
+```text
+Our main production-style deployment is on Azure AKS. As a separate backup-cloud showcase, we deployed the same Dockerised Flask application to Google Cloud Run.
+
+This demonstrates multi-cloud portability because the application is packaged as a Docker container and can run outside Azure with minimal changes.
+
+This is not a full disaster recovery setup yet. A complete DR setup would also require database replication, DNS failover, secrets management, monitoring, alerting, and recovery planning.
+```
+
+---
+
 ## 💰 Cost Control
 
 To reduce Azure cost, AKS can be stopped when not actively testing or demonstrating.
+
+For the GCP Cloud Run showcase, the Cloud Run service was deleted after screenshot evidence was captured. The Artifact Registry repository can also be deleted after the presentation if it is no longer needed.
 
 ### Stop AKS
 
@@ -1075,6 +1118,9 @@ capstone/
 │   ├── schema_orders.sql
 │   ├── schema_products.sql
 │   └── seed_products.sql
+├── docs/
+│   ├── gcp-cloud-run-showcase.md
+│   └── images/
 ├── documentation/
 │   ├── azure_blob_storage_future_plan.md
 │   ├── database_setup.md
@@ -1151,6 +1197,7 @@ capstone/
 
 ## 🔮 Future Improvements
 
+- Expand the GCP proof of concept into a fuller disaster recovery design with database replication, DNS failover, monitoring, and recovery testing.
 - Add product image uploads and storage using Azure Blob Storage
 - Add HTTPS ingress with a custom domain
 - Add Azure Key Vault for secrets management
@@ -1177,6 +1224,7 @@ Before running a deployment demo:
 7. Confirm product images load correctly.
 8. Capture screenshots as evidence.
 9. Stop AKS after testing to reduce cost.
+10. For the GCP showcase, verify the screenshots in `docs/gcp-cloud-run-showcase.md` and confirm Cloud Run was cleaned up after evidence was captured.
 
 ### Before running Terraform
 
