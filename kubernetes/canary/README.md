@@ -89,10 +89,10 @@ Deploy canary version with fewer replicas
 Test /health, homepage, product, and cart routes
         │
         ▼
-If healthy, increase canary replicas or update production image
+If healthy, promote canary image to stable deployment
         │
         ▼
-If unhealthy, remove canary deployment
+If unhealthy, remove canary deployment and keep stable running
 ```
 
 ---
@@ -137,10 +137,21 @@ kubectl get svc -n staging
 
 ## 7. Health Checks
 
-Test the health endpoint through the service public IP:
+Because the staging service is currently using `ClusterIP`, the safest testing method is port-forwarding.
+
+Start port-forwarding from the project root or any terminal connected to AKS:
 
 ```bash
-curl -i http://<external-ip>/health
+kubectl port-forward -n staging service/capstone-canary-service 8080:80
+```
+
+Then test the routes locally:
+
+```bash
+curl -i http://localhost:8080/health
+curl -i http://localhost:8080/
+curl -i http://localhost:8080/product/TSHIRT-001
+curl -i http://localhost:8080/cart
 ```
 
 Expected result:
@@ -148,6 +159,8 @@ Expected result:
 ```text
 HTTP/1.1 200 OK
 ```
+
+> Note: `ClusterIP` is being used because the Azure subscription has reached the public IP limit in Southeast Asia. Port-forwarding allows the team to test the AKS service without needing a new public LoadBalancer IP.
 
 ---
 
@@ -163,7 +176,75 @@ The stable deployment can continue running.
 
 ---
 
-## 9. Production-Ready Future Improvement
+## 9. Automated Canary Promotion and Rollback Scripts
+
+This project now includes helper scripts for testing, promoting, and rolling back the canary deployment.
+
+The scripts are located in:
+
+```text
+scripts/
+├── canary_promote_or_rollback.sh
+└── canary_rollback.sh
+```
+
+### 9.1 Canary promotion script
+
+Run this from the project root:
+
+```bash
+./scripts/canary_promote_or_rollback.sh
+```
+
+This script performs the following steps:
+
+1. Checks that the `staging` namespace exists.
+2. Applies the stable deployment.
+3. Applies the canary deployment.
+4. Applies the canary service.
+5. Waits for both stable and canary rollouts to complete.
+6. Starts a local port-forward to the `ClusterIP` service.
+7. Tests the following routes:
+   - `/health`
+   - `/`
+   - `/product/TSHIRT-001`
+   - `/cart`
+8. If all checks pass, the canary image is promoted to the stable deployment.
+9. The canary deployment is removed after successful promotion.
+
+### 9.2 Manual rollback script
+
+If the canary deployment has problems, run:
+
+```bash
+./scripts/canary_rollback.sh
+```
+
+This removes the canary deployment while leaving the stable deployment active.
+
+### 9.3 Tested result
+
+The automation was tested successfully against the staging AKS environment.
+
+The script confirmed:
+
+- Stable deployment rolled out successfully.
+- Canary deployment rolled out successfully.
+- `ClusterIP` service was tested through port-forwarding.
+- `/health`, homepage, product detail, and cart routes passed.
+- Canary image `capstonetfacr047af007.azurecr.io/ecommerce-app:v24` was promoted to the stable deployment.
+- Canary deployment was removed after promotion.
+- Stable deployment remained healthy with `2/2` replicas.
+
+### 9.4 Important note
+
+This is script-based automation for the capstone staging environment.
+
+It does not provide advanced percentage-based production traffic splitting. For that, the project would need a tool such as an ingress controller, service mesh, or Argo Rollouts.
+
+---
+
+## 10. Production-Ready Future Improvement
 
 For real production canary deployment, the team should add:
 
@@ -172,22 +253,26 @@ For real production canary deployment, the team should add:
 | Ingress Controller | Allows traffic routing rules |
 | Weighted traffic split | Sends specific percentages to canary |
 | Monitoring dashboard | Tracks errors and latency |
-| Automated rollback | Rolls back if canary fails |
-| Argo Rollouts | Manages progressive delivery |
+| Automated alerting | Notifies the team if errors increase |
+| Argo Rollouts | Manages progressive delivery and automated promotion/rollback |
+
+> The capstone project now includes a working script-based promotion and rollback approach. A future production version can improve this further by using weighted traffic routing and automated metric-based decisions.
 
 ---
 
-## 10. Presentation Explanation
+## 11. Presentation Explanation
 
 Use this explanation:
 
 ```text
 We added a canary deployment structure to show how a future production release could safely test a new app version alongside the stable version. The basic Kubernetes service can route traffic to both versions, while exact percentage-based canary routing would require a future ingress controller or rollout tool such as Argo Rollouts.
+
+For this capstone, we also added a script-based automation step. The script deploys stable and canary versions, checks the rollout status, tests the main app routes through port-forwarding, promotes the canary image to stable if the checks pass, and removes the canary deployment after successful promotion.
 ```
 
 ---
 
-## 11. Final Recommendation
+## 12. Final Recommendation
 
 For The Shirt Bar, canary deployment should be implemented after staging and monitoring are stable.
 
@@ -200,7 +285,11 @@ Monitoring dashboard
         ▼
 Canary deployment structure
         ▼
+Script-based promotion and rollback
+        ▼
 Ingress-based traffic splitting
         ▼
-Automated rollback
+Metric-based automated rollback
 ```
+
+The current project has completed the safe staging-level canary structure and script-based promotion workflow. The next production-level improvement would be more advanced traffic splitting using ingress, service mesh, or Argo Rollouts.
