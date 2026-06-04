@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capstone-app
+  namespace: dev
+  labels:
+    app: capstone
+    environment: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: capstone
+      environment: dev
+  template:
+    metadata:
+      labels:
+        app: capstone
+        environment: dev
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: app
+        image: capstonereg047af007.azurecr.io/ecommerce-app:v23
+        ports:
+        - containerPort: 8000
+
+        envFrom:
+        - secretRef:
+            name: app-secrets
+
+        env:
+        - name: AZURE_REGION
+          value: "southeastasia"
+        - name: APP_ENVIRONMENT
+          value: "dev"
+
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
