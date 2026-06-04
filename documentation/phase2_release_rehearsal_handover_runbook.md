@@ -5,7 +5,7 @@ Resource Group: rg-capstone
 Phase: Phase 2 — Azure Deployment and Cloud Readiness  
 Task: CSD-23 — P2-11 Complete Azure Release Rehearsal and Handover Runbook  
 Owner: Khairul Rizal  
-Status: Draft — pending P10 cost-control and cleanup confirmation  
+Status: Updated after P10 — ready for final rehearsal  
 Last Updated: 03-06-2026
 
 ---
@@ -21,8 +21,7 @@ The goal is to make sure the team can:
 - Check that monitoring and deployment checks are available.
 - Understand what to do if the website does not work during the final demo.
 - Know which resources should remain running and which resources should be stopped after testing.
-
-This runbook is currently a draft because P10 cost-control and cleanup work is still pending.
+- Follow the agreed Azure cost-control and cleanup rules.
 
 ---
 
@@ -40,9 +39,9 @@ This runbook is currently a draft because P10 cost-control and cleanup work is s
 | CI/CD Release Workflow | Completed |
 | Ansible Deployment Check | Completed |
 | Azure Monitoring | Completed |
-| Cost Controls and Cleanup Checklist | Pending P10 |
-| Final Release Rehearsal | Pending |
-| Final Handover Runbook | Draft in progress |
+| Cost Controls and Cleanup Checklist | Completed in P10 |
+| Final Release Rehearsal | Pending final run |
+| Final Handover Runbook | Updated after P10 |
 
 ---
 
@@ -57,6 +56,7 @@ This runbook is currently a draft because P10 cost-control and cleanup work is s
 | Azure SQL Server | `sql-capstone-csd07grp2` |
 | Product Database | `tsb-products-db` |
 | Orders Database | `tsb-orders-db` |
+| Legacy / leftover database | `sql-capstone-CSD07-grp2` |
 | AKS Service | `capstone-service` |
 | AKS Service Type | `LoadBalancer` |
 | Current External IP | `20.184.58.23` |
@@ -86,7 +86,52 @@ Secrets should be stored only in the correct private platform, such as Azure, Gi
 
 ---
 
-## 5. Pre-Rehearsal Checklist
+## 5. P10 Cost-Control Summary
+
+P10 has been completed and documented in:
+
+    documentation/P2-10_Cost_Controls_and_Cleanup.docx
+
+Key P10 outcomes:
+
+| Item | Confirmed Detail |
+|---|---|
+| Azure budget | `$20/month` |
+| Budget scope | `rg-capstone` |
+| Alert thresholds | `50%`, `80%`, `100%` |
+| Alert recipients | All four team members |
+| Cost owner | Khairul Rizal |
+| Main scale-down action | Stop AKS when idle |
+| Tagging status | Completed across SQL resources |
+| Leftover database | `sql-capstone-CSD07-grp2` |
+| Leftover database action | Flagged as deletion candidate after confirmation |
+| Cleanup checklist | Documented in P10 file |
+
+The leftover database `sql-capstone-CSD07-grp2` has been tagged using the full project tag set but should be treated as a cleanup candidate because it appears unused.
+
+Do not delete it before the final demo unless the team confirms it is safe to remove.
+
+---
+
+## 6. Final Demo Required Resource List
+
+The following resources should remain available for the final rehearsal and presentation:
+
+| Resource | Required for Demo? | Notes |
+|---|---|---|
+| `rg-capstone` | Yes | Main Azure resource group |
+| `capstone-aks` | Yes | Required to host the deployed website |
+| `capstonereg047af007` | Yes | Required for container image storage |
+| `sql-capstone-csd07grp2` | Yes | Required for Azure SQL databases |
+| `tsb-products-db` | Yes | Product database |
+| `tsb-orders-db` | Yes | Orders database |
+| `capstone-service` | Yes | Public LoadBalancer service |
+| Monitoring/log resources | Yes | Required for P9 monitoring explanation |
+| `sql-capstone-CSD07-grp2` | No / cleanup candidate | Keep until final confirmation |
+
+---
+
+## 7. Pre-Rehearsal Checklist
 
 Before starting the final release rehearsal, confirm the following:
 
@@ -106,11 +151,11 @@ Before starting the final release rehearsal, confirm the following:
 | Failed/cancelled flow works | Pending |
 | Ansible health check passes | Pending |
 | Azure monitoring/logs checked | Pending |
-| P10 cleanup/cost-control checklist confirmed | Pending P10 |
+| P10 cleanup/cost-control checklist confirmed | Completed |
 
 ---
 
-## 6. Start AKS Cluster
+## 8. Start AKS Cluster
 
 If the AKS cluster is stopped, start it before testing:
 
@@ -133,7 +178,7 @@ Expected result:
 
 ---
 
-## 7. Refresh AKS Credentials
+## 9. Refresh AKS Credentials
 
 After starting AKS, refresh local Kubernetes credentials:
 
@@ -161,7 +206,7 @@ Look for:
 
 ---
 
-## 8. Website Smoke Test
+## 10. Website Smoke Test
 
 Open the website URL in a browser:
 
@@ -183,7 +228,7 @@ Test the following pages and flows:
 
 ---
 
-## 9. Run Ansible Deployment Check
+## 11. Run Ansible Deployment Check
 
 The Ansible playbook provides a repeatable health check for the deployed website.
 
@@ -206,7 +251,7 @@ If the playbook fails, check:
 
 ---
 
-## 10. Check Azure Monitoring
+## 12. Check Azure Monitoring
 
 Check monitoring after the release rehearsal.
 
@@ -219,11 +264,11 @@ Areas to review:
 | Alerts | Whether alerts are configured or visible | Pending |
 | Resource usage | CPU/memory usage during testing | Pending |
 
-Notes from P9 monitoring task should be added here after final confirmation.
+Monitoring should be checked after the website smoke test so that the team can confirm the deployed application generated visible activity.
 
 ---
 
-## 11. Azure SQL Check
+## 13. Azure SQL Check
 
 Azure SQL resources used by the project:
 
@@ -231,19 +276,22 @@ Azure SQL resources used by the project:
 |---|---|
 | `tsb-products-db` | Stores product/category data |
 | `tsb-orders-db` | Stores order/order item data |
+| `sql-capstone-CSD07-grp2` | Legacy / leftover database, flagged as cleanup candidate |
 
 Known database setup completed:
 
 - Product database schema created.
 - Product seed data inserted.
 - Orders database schema created.
+- SQL resources tagged.
+- Legacy database tagged and flagged as a deletion candidate.
 - No SQL credentials are stored in this runbook.
 
 During final rehearsal, confirm whether the deployed application is reading from Azure SQL or using local/static data, depending on the latest application configuration.
 
 ---
 
-## 12. Rollback / Recovery Notes
+## 14. Rollback / Recovery Notes
 
 If the website fails during the final demo, follow this order:
 
@@ -258,29 +306,55 @@ If the website fails during the final demo, follow this order:
 
 ---
 
-## 13. Cost-Control and Cleanup Section
+## 15. Cost-Control and Cleanup Rules
 
-This section is pending P10.
+The team has confirmed the Azure budget and cleanup approach in P10.
 
-To be completed after P10 confirms:
+### Budget and Alerts
 
-- Which resources must remain running for the final presentation.
-- Which resources can be stopped after testing.
-- Whether AKS should be stopped after each rehearsal.
-- Whether any unused resources should be removed.
-- Budget alert or cost-monitoring notes.
-- Final cleanup checklist after the capstone presentation.
+| Item | Value |
+|---|---|
+| Monthly budget | `$20/month` |
+| Scope | `rg-capstone` |
+| Alert thresholds | `50%`, `80%`, `100%` |
+| Alert recipients | All four team members |
+| Cost owner | Khairul Rizal |
 
-Current temporary guidance:
+### Main Cost-Control Rule
 
-- Stop AKS when the team is not actively testing.
-- Do not delete shared resources unless the team agrees.
-- Do not delete databases or ACR images before the final demo.
-- Check with the team before stopping resources during active testing periods.
+Stop AKS when the team is not actively testing or presenting.
+
+AKS should be running only when needed for:
+
+- Final rehearsal
+- Team testing
+- Presentation/demo
+- Troubleshooting deployment issues
+
+### Resources Not to Delete Before Final Demo
+
+Do not delete the following before the final presentation:
+
+- `rg-capstone`
+- `capstone-aks`
+- `capstonereg047af007`
+- `sql-capstone-csd07grp2`
+- `tsb-products-db`
+- `tsb-orders-db`
+- Kubernetes deployment/service files
+- Monitoring/logging resources required for explanation
+
+### Cleanup Candidate
+
+The database below appears unused and has been flagged as a deletion candidate:
+
+    sql-capstone-CSD07-grp2
+
+Action: keep it until the team confirms it is safe to delete after the final demo.
 
 ---
 
-## 14. Stop AKS After Testing
+## 16. Stop AKS After Testing
 
 If no team member needs the website running, stop AKS to reduce Azure cost:
 
@@ -301,11 +375,32 @@ Expected result:
     PowerState    Stopped
     Succeeded
 
+Important note: when AKS is stopped, the public website may not be reachable. This is expected.
+
 ---
 
-## 15. Final Rehearsal Sign-Off
+## 17. Post-Presentation Cleanup Checklist
 
-This section should be completed after P10 is finished and the full rehearsal has been run.
+After the final capstone presentation, the team should review and clean up resources carefully.
+
+| Cleanup Item | Action |
+|---|---|
+| AKS cluster | Stop when no longer needed |
+| ACR images | Keep until final submission is confirmed |
+| SQL databases | Keep required databases until final submission is confirmed |
+| Legacy database | Review and delete only if team confirms it is unused |
+| Budget alerts | Keep until all Azure resources are cleaned up |
+| Documentation | Keep in GitHub |
+| Secrets | Do not commit; remove from local machines if no longer needed |
+| Resource group | Delete only after final confirmation from the team and lecturer |
+
+Do not delete the full resource group until the team is certain that no further demo, grading, screenshot, or evidence collection is required.
+
+---
+
+## 18. Final Rehearsal Sign-Off
+
+This section should be completed after the full rehearsal has been run.
 
 | Item | Status | Notes |
 |---|---|---|
@@ -318,30 +413,31 @@ This section should be completed after P10 is finished and the full rehearsal ha
 | Success/failure pages tested | Pending |  |
 | Ansible health check passed | Pending |  |
 | Monitoring checked | Pending |  |
-| Cost-control/cleanup confirmed | Pending P10 |  |
+| Cost-control/cleanup confirmed | Completed | Based on P10 |
 | Known issues documented | Pending |  |
 | Team handover completed | Pending |  |
 
 ---
 
-## 16. Known Issues / Pending Items
+## 19. Known Issues / Pending Items
 
 | Item | Owner | Status |
 |---|---|---|
-| P10 cost-control and cleanup checklist | Faith | Pending |
+| P10 cost-control and cleanup checklist | Faith | Completed |
 | Final release rehearsal | Khairul Rizal | Pending |
-| Final runbook update after P10 | Khairul Rizal | Pending |
+| Final runbook update after rehearsal | Khairul Rizal | Pending |
 | Final team sign-off | Team | Pending |
+| Confirm deletion of `sql-capstone-CSD07-grp2` after demo | Team | Pending |
 
 ---
 
-## 17. Final Notes
+## 20. Final Notes
 
 This runbook is designed to help the team avoid confusion during the final presentation.
 
 The team should use it as a checklist before the final demo, during the rehearsal, and after testing is completed.
 
-This draft can be committed before P10 is complete, but the final PR should not be closed until the P10 cost-control and cleanup section has been updated.
+The P10 cost-control and cleanup information has now been added. The remaining work is to run the final rehearsal, record the results, and complete the final sign-off table.
 
 Prepared by: Khairul Rizal  
-Status: Draft pending P10
+Status: Updated after P10 — pending final rehearsal
