@@ -65,21 +65,19 @@ The full shop application was successfully deployed and tested on **Azure Kubern
 
 Screenshots were captured during the successful AKS deployment test.
 
-Recommended screenshot files:
+### Homepage
 
-```text
-documentation/screenshots/aks-homepage-v23.png
-documentation/screenshots/aks-product-detail-v23.png
-documentation/screenshots/aks-cart-v23.png
-```
+![The Shirt Bar AKS Homepage](documentation/screenshots/aks-homepage-v23.png)
 
-| Page | Screenshot |
-|---|---|
-| **Homepage** | `aks-homepage-v23.png` |
-| **Product Detail** | `aks-product-detail-v23.png` |
-| **Cart Page** | `aks-cart-v23.png` |
+### Product Detail Page
 
-> These screenshots provide visual evidence that the deployed application was reachable through the AKS public IP and that the main shop pages loaded successfully.
+![The Shirt Bar Product Detail Page](documentation/screenshots/aks-product-detail-v23.png)
+
+### Cart Page
+
+![The Shirt Bar Cart Page](documentation/screenshots/aks-cart-v23.png)
+
+> These screenshots show that the deployed application was reachable through the AKS public IP and that the main shop pages loaded successfully.
 
 ---
 
