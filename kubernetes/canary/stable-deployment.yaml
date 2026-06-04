@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: capstonetfacr047af007.azurecr.io/ecommerce-app:v23
+        image: capstonetfacr047af007.azurecr.io/ecommerce-app:v24
         ports:
         - containerPort: 8000
 
