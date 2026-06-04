@@ -1,0 +1,77 @@
+// Application Health Queries for The Shirt Bar Capstone
+// These starter queries are intended for future use with application logs,
+// Container Insights, or Application Insights.
+
+// --------------------------------------------------
+// 1. Container logs containing health route checks
+// --------------------------------------------------
+ContainerLog
+| where TimeGenerated > ago(24h)
+| where LogEntry contains "/health"
+| project TimeGenerated, Computer, ContainerID, LogEntry
+| order by TimeGenerated desc
+
+// --------------------------------------------------
+// 2. Flask or Gunicorn errors in container logs
+// --------------------------------------------------
+ContainerLog
+| where TimeGenerated > ago(24h)
+| where LogEntry has_any ("ERROR", "Exception", "Traceback", "500")
+| project TimeGenerated, Computer, ContainerID, LogEntry
+| order by TimeGenerated desc
+
+// --------------------------------------------------
+// 3. Successful application startup logs
+// --------------------------------------------------
+ContainerLog
+| where TimeGenerated > ago(24h)
+| where LogEntry has_any ("Booting worker", "Listening at", "gunicorn")
+| project TimeGenerated, Computer, ContainerID, LogEntry
+| order by TimeGenerated desc
+
+// --------------------------------------------------
+// 4. Product page access logs
+// --------------------------------------------------
+ContainerLog
+| where TimeGenerated > ago(24h)
+| where LogEntry contains "/product/"
+| project TimeGenerated, LogEntry
+| order by TimeGenerated desc
+
+// --------------------------------------------------
+// 5. Cart page access logs
+// --------------------------------------------------
+ContainerLog
+| where TimeGenerated > ago(24h)
+| where LogEntry contains "/cart"
+| project TimeGenerated, LogEntry
+| order by TimeGenerated desc
+
+// --------------------------------------------------
+// 6. Checkout route access logs
+// --------------------------------------------------
+ContainerLog
+| where TimeGenerated > ago(24h)
+| where LogEntry contains "/checkout"
+| project TimeGenerated, LogEntry
+| order by TimeGenerated desc
+
+// --------------------------------------------------
+// 7. Future Application Insights request success rate
+// --------------------------------------------------
+// Use this after Application Insights is added.
+requests
+| where timestamp > ago(24h)
+| summarize TotalRequests = count(), FailedRequests = countif(success == false) by bin(timestamp, 15m)
+| extend SuccessRate = 100.0 * (TotalRequests - FailedRequests) / TotalRequests
+| order by timestamp desc
+
+// --------------------------------------------------
+// 8. Future Application Insights slow requests
+// --------------------------------------------------
+// Use this after Application Insights is added.
+requests
+| where timestamp > ago(24h)
+| where duration > 1000
+| project timestamp, name, url, resultCode, duration, success
+| order by duration desc
