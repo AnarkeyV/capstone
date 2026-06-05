@@ -251,6 +251,7 @@ The project focuses on:
 |---|---|
 | Backend | Python, Flask |
 | Frontend | HTML, CSS, Jinja2 Templates |
+| AI Chatbot | Tidio |
 | Database | Azure SQL Database |
 | Containerisation | Docker |
 | Container Registry | Azure Container Registry |
