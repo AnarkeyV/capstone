@@ -3,25 +3,27 @@
 [![Flask](https://img.shields.io/badge/flask-ecommerce-green.svg)](https://flask.palletsprojects.com/)
 [![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
 [![Azure](https://img.shields.io/badge/Azure-AKS%20%7C%20ACR%20%7C%20SQL-0078D4.svg)](https://azure.microsoft.com/)
-[![GCP](https://img.shields.io/badge/Google%20Cloud-Cloud%20Run%20Showcase-4285F4.svg)](https://cloud.google.com/run)
-[![Terraform](https://img.shields.io/badge/terraform-remote%20state%20%7C%20staging-7B42BC.svg)](https://www.terraform.io/)
-[![Kubernetes](https://img.shields.io/badge/kubernetes-staging%20%7C%20canary%20%7C%20blue--green-326CE5.svg)](https://kubernetes.io/)
-[![Status](https://img.shields.io/badge/project-final%20improvements%20validated-success.svg)](#current-project-status)
+[![Kubernetes](https://img.shields.io/badge/kubernetes-deployed-326CE5.svg)](https://kubernetes.io/)
+[![Terraform](https://img.shields.io/badge/terraform-IaC-7B42BC.svg)](https://www.terraform.io/)
+[![GCP](https://img.shields.io/badge/GCP-Cloud%20Run%20POC-4285F4.svg)](https://cloud.google.com/run)
+[![Status](https://img.shields.io/badge/project-final%20proposal%20ready-success.svg)](#final-project-status)
 
 # 🛍️ The Shirt Bar — Cloud-Native E-Commerce Capstone Project
 
 A cloud-native e-commerce platform for **The Shirt Bar**, a premium sustainable menswear brand based in Singapore.
 
-This project demonstrates how a Flask-based online shop can be containerised with Docker, pushed to Azure Container Registry, deployed to Azure Kubernetes Service, prepared with Azure SQL Database support, automated through GitHub Actions, and extended with Terraform-managed staging infrastructure, monitoring assets, canary deployment automation, blue-green deployment comparison, and a separate Google Cloud Run backup-cloud proof of concept.
+This project demonstrates how a Flask-based online shop can be containerised with Docker, pushed to Azure Container Registry, deployed to Azure Kubernetes Service, prepared for Azure SQL Database integration, automated through GitHub Actions, extended with Terraform-managed staging infrastructure, supported with safer release strategies such as canary and blue-green deployments, documented with monitoring and handover runbooks, and enhanced with a **Tidio AI chatbot widget** for first-level customer support.
 
 ---
 
 ## 📋 Table of Contents
 
-- [Current Project Status](#current-project-status)
-- [Live Deployment Evidence](#live-deployment-evidence)
+- [Final Project Status](#final-project-status)
 - [Project Overview](#project-overview)
 - [Key Features](#key-features)
+- [Live Deployment Evidence](#live-deployment-evidence)
+- [Screenshots](#screenshots)
+- [Tidio AI Chatbot Evidence](#tidio-ai-chatbot-evidence)
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
 - [Azure Resources](#azure-resources)
@@ -29,49 +31,97 @@ This project demonstrates how a Flask-based online shop can be containerised wit
 - [Local Development](#local-development)
 - [Automated Testing](#automated-testing)
 - [Docker Build and Local Test](#docker-build-and-local-test)
-- [Docker Platform Note for AKS](#docker-platform-note-for-aks)
+- [Kubernetes Deployment](#kubernetes-deployment)
+- [GitHub Actions CI/CD](#github-actions-cicd)
 - [Terraform Staging Infrastructure](#terraform-staging-infrastructure)
 - [Terraform Remote Backend](#terraform-remote-backend)
-- [Kubernetes Deployment](#kubernetes-deployment)
-- [Canary Deployment Strategy](#canary-deployment-strategy)
-- [Blue-Green Deployment Strategy](#blue-green-deployment-strategy)
-- [Monitoring Dashboard Package](#monitoring-dashboard-package)
-- [GitHub Actions CI/CD](#github-actions-cicd)
+- [Canary Deployment](#canary-deployment)
+- [Blue-Green Deployment](#blue-green-deployment)
 - [Azure SQL Databases](#azure-sql-databases)
+- [Monitoring and Operational Evidence](#monitoring-and-operational-evidence)
+- [GCP Cloud Run Backup-Cloud Proof of Concept](#gcp-cloud-run-backup-cloud-proof-of-concept)
 - [Release Rehearsal Result](#release-rehearsal-result)
-- [GCP Cloud Run Backup-Cloud Showcase](#gcp-cloud-run-backup-cloud-showcase)
 - [Cost Control](#cost-control)
-- [Known Limitation: Azure Public IP Quota](#known-limitation-azure-public-ip-quota)
 - [Project Structure](#project-structure)
 - [DevOps and Cloud Skills Demonstrated](#devops-and-cloud-skills-demonstrated)
+- [Troubleshooting Notes](#troubleshooting-notes)
 - [Future Improvements](#future-improvements)
 - [Team Handover Notes](#team-handover-notes)
 
 ---
 
-## ✅ Current Project Status
+## ✅ Final Project Status
 
-The project has completed the original release rehearsal and has now been extended with tested staging infrastructure, monitoring assets, expanded automated tests, Terraform remote backend storage, canary promotion automation, and blue-green deployment comparison.
-
-| Area | Status |
+| Item | Status |
 |---|---|
 | Flask e-commerce application | Completed |
+| Product listing and product detail pages | Completed |
+| Cart and checkout routes | Completed |
+| Tidio AI chatbot widget | Completed and locally verified |
 | Docker container build | Completed |
 | Azure Container Registry image push | Completed |
-| AKS deployment | Completed |
-| Release rehearsal | Passed |
-| Terraform-managed staging infrastructure | Tested successfully |
-| Terraform remote backend storage | Added and validated |
-| Staging AKS deployment | Tested successfully |
-| Product image loading in staging | Verified |
-| Automated pytest coverage | Expanded to 26 passing tests |
-| Canary deployment strategy | Tested successfully |
-| Automated canary promotion and rollback scripts | Added and tested |
-| Blue-green deployment strategy example | Added and tested |
-| GCP Cloud Run backup-cloud showcase | Completed and screenshot evidence captured |
-| Monitoring dashboard package | Added |
-| Current working branch | `main` |
-| Documentation status | Updated on `main` after final improvements were merged |
+| Azure Kubernetes Service deployment | Completed and verified |
+| GitHub Actions CI/CD | Completed |
+| Automated pytest suite | 26 tests passed |
+| Terraform staging infrastructure | Completed |
+| Terraform remote backend | Completed |
+| Canary deployment example | Completed and tested |
+| Blue-green deployment example | Completed |
+| Monitoring and health-check documentation | Completed |
+| Azure SQL preparation | Completed / planned production integration |
+| GCP Cloud Run proof of concept | Completed |
+| Final proposal documentation | Completed |
+
+> **Current branch:** `main`  
+> **Documentation status:** Updated after chatbot verification and final proposal alignment.
+
+---
+
+## 📖 Project Overview
+
+The Shirt Bar e-commerce application was built as a practical DevOps and Cloud Support capstone project.
+
+The project focuses on:
+
+- Building a Flask e-commerce web application
+- Structuring the app with routes, templates, static assets and product models
+- Adding product listing, product detail, cart, checkout, success and failed-payment pages
+- Adding a `/health` endpoint for Kubernetes liveness and readiness checks
+- Adding a **Tidio AI chatbot widget** for basic customer assistance and product enquiries
+- Containerising the application using Docker
+- Storing application images in Azure Container Registry
+- Deploying the containerised application to Azure Kubernetes Service
+- Automating test, build, push and deployment steps through GitHub Actions
+- Preparing Azure SQL Database support for future product and order data persistence
+- Creating Terraform-managed staging infrastructure
+- Using Terraform remote backend storage for shared state management
+- Demonstrating safer release strategies through canary and blue-green deployment examples
+- Documenting monitoring, release rehearsal, cost control and handover procedures
+- Demonstrating multi-cloud container portability through a separate GCP Cloud Run proof of concept
+
+---
+
+## ✨ Key Features
+
+| Feature | Description |
+|---|---|
+| **Product Listing** | Homepage displays The Shirt Bar product collection |
+| **Product Detail Page** | Individual product pages using SKU routes |
+| **Shopping Cart** | Cart page and add-to-cart route structure |
+| **Checkout Flow** | Checkout, success and failed-payment pages prepared for e-commerce flow |
+| **Flask Blueprints** | Routes split into product, cart and checkout modules |
+| **Health Endpoint** | `/health` route supports Kubernetes probes and deployment validation |
+| **AI Chatbot Widget** | Tidio chatbot embedded into the shared Flask base template for first-level customer assistance, product enquiries and basic support guidance |
+| **Dockerised App** | Flask app packaged into a production container |
+| **ACR Integration** | Docker images pushed to Azure Container Registry |
+| **AKS Deployment** | App deployed through Kubernetes Deployment and Service YAML |
+| **CI/CD Workflow** | GitHub Actions builds, tests, pushes and deploys the app |
+| **Terraform Staging** | Infrastructure-as-code staging environment created with Terraform |
+| **Remote Terraform Backend** | Azure Storage backend prepared for shared Terraform state |
+| **Canary Deployment** | Canary promotion and rollback scripts created and tested |
+| **Blue-Green Deployment** | Blue-green Kubernetes manifests prepared for safer production releases |
+| **Monitoring Assets** | Health checks, monitoring guide and operational runbooks documented |
+| **GCP Cloud Run POC** | Same Dockerised app deployed to Google Cloud Run as a backup-cloud proof of concept |
 
 ---
 
@@ -82,14 +132,15 @@ The full shop application was successfully deployed and tested on **Azure Kubern
 | Item | Value |
 |---|---|
 | **Previous AKS Image** | `capstonereg047af007.azurecr.io/ecommerce-app:v23` |
-| **Latest Tested Staging Image** | `capstonetfacr047af007.azurecr.io/ecommerce-app:v24` |
+| **Latest Staging Image** | `capstonetfacr047af007.azurecr.io/ecommerce-app:v24` |
 | **AKS Service** | `capstone-service` |
 | **Deployment** | `capstone-app` |
-| **Previous Public Test IP** | `http://20.184.58.23` |
-| **Current Staging Access Method** | `kubectl port-forward` |
-| **Final Result** | Full shop and staging deployment verified successfully |
+| **Original Resource Group** | `rg-capstone` |
+| **Original AKS Cluster** | `capstone-aks` |
+| **Original ACR** | `capstonereg047af007` |
+| **Final Result** | Full shop deployment verified successfully |
 
-> **Cost and quota note:** AKS may be stopped outside testing/demo periods to reduce Azure cost. In the latest staging work, services were tested using `ClusterIP` and `kubectl port-forward` because the Azure subscription reached the public IP limit in Southeast Asia.
+> **Cost note:** AKS may be stopped outside testing/demo periods to reduce Azure cost, so the public endpoint may not always be reachable.
 
 ### ✅ Verified Routes
 
@@ -99,12 +150,15 @@ The full shop application was successfully deployed and tested on **Azure Kubern
 | `/health` | `200 OK` | Kubernetes health check |
 | `/product/TSHIRT-001` | `200 OK` | Product detail page |
 | `/cart` | `200 OK` | Shopping cart page |
+| `/checkout` | `200 OK` | Checkout page |
+| `/success` | `200 OK` | Successful payment page |
+| `/failed` | `200 OK` | Failed or cancelled payment page |
 
 ---
 
 ## 📸 Screenshots
 
-Screenshots were captured during the successful AKS deployment test.
+Screenshots were captured during the successful AKS deployment and local verification checks.
 
 ### Homepage
 
@@ -122,63 +176,76 @@ Screenshots were captured during the successful AKS deployment test.
 
 ---
 
-## 📖 Project Overview
+## 🤖 Tidio AI Chatbot Evidence
 
-The Shirt Bar e-commerce application was built as a practical cloud deployment project.
+The latest prototype includes a **Tidio AI chatbot widget** embedded into the shared Flask base template.
 
-The project focuses on:
+The chatbot provides first-level customer assistance for:
 
-- Building a Flask e-commerce web app
-- Containerising the application using Docker
-- Storing application images in Azure Container Registry
-- Deploying to Azure Kubernetes Service
-- Using Kubernetes health probes
-- Preparing Azure SQL databases for product and order data
-- Automating release deployment through GitHub Actions
-- Creating Terraform-managed staging infrastructure
-- Using Terraform remote backend storage for shared team state
-- Testing Kubernetes staged environments
-- Testing and automating a canary deployment strategy
-- Adding a blue-green deployment strategy for comparison
-- Adding monitoring dashboard documentation/assets
-- Documenting release rehearsal and handover steps
-- Applying cost-control practices by stopping AKS after testing
-- Demonstrating backup-cloud portability using Google Cloud Run
+- Product enquiries
+- Styling questions
+- Store or support guidance
+- Basic customer-service questions before escalation to staff
 
----
+### Implementation Location
 
-## ✨ Key Features
+The chatbot is implemented in:
 
-| Feature | Description |
+```text
+app/templates/base.html
+```
+
+The Tidio widget is loaded through a frontend script tag, which means it appears across pages that extend the shared base template.
+
+> Important clarification: the chatbot is **not** a custom Flask backend service and it is **not** a separate AKS microservice. It is a third-party frontend widget embedded into the website.
+
+### Pages Tested
+
+| Page | Result |
 |---|---|
-| **Product Listing** | Homepage displays The Shirt Bar product collection |
-| **Product Detail Page** | Individual product pages using SKU routes |
-| **Shopping Cart** | Cart page and add-to-cart route structure |
-| **Flask Blueprints** | Routes split into product, cart, and checkout modules |
-| **Health Endpoint** | `/health` route supports Kubernetes probes |
-| **Dockerised App** | Flask app packaged into a production container |
-| **ACR Integration** | Docker images pushed to Azure Container Registry |
-| **AKS Deployment** | App deployed through Kubernetes Deployment and Service YAML |
-| **Terraform Staging** | Staging infrastructure managed through Terraform |
-| **Terraform Remote Backend** | Shared Terraform state stored in Azure Storage |
-| **Canary Deployment** | Safer deployment strategy tested using Kubernetes resources |
-| **Canary Automation** | Script-based promotion and rollback workflow added |
-| **Blue-Green Deployment** | Blue-green comparison strategy added and tested |
-| **Monitoring Package** | Monitoring dashboard package added for operational visibility |
-| **CI/CD Workflow** | GitHub Actions builds, tests, pushes, and deploys the app |
-| **Release Runbook** | Handover and release rehearsal documented for team use |
-| **GCP Cloud Run Showcase** | Same Dockerised Flask app deployed to Google Cloud Run as a backup-cloud proof of concept |
+| Homepage | Chatbot bubble visible |
+| Product detail page | Chatbot available |
+| Cart page | Chatbot available |
+| Checkout page | Chatbot available |
+
+### Local Desktop Verification
+
+The chatbot was tested locally on desktop and verified to:
+
+- Appear on the storefront
+- Open successfully
+- Accept a customer enquiry
+- Provide a response
+- Not block the main shop layout
+- Not break existing Flask routes
+- Pass the existing automated test suite after verification
+
+### Screenshot Evidence
+
+| Evidence | Screenshot Path |
+|---|---|
+| Homepage chatbot bubble | `documentation/screenshots/chatbot/chatbot-homepage-bubble.png` |
+| Chatbot window opened | `documentation/screenshots/chatbot/chatbot-window-opened.png` |
+| Sample chatbot reply | `documentation/screenshots/chatbot/chatbot-sample-reply.png` |
+
+Full evidence notes are documented in:
+
+```text
+documentation/chatbot_tidio_evidence.md
+```
 
 ---
 
 ## 🏗️ Architecture
+
+The project uses an Azure-first architecture with a separate GCP Cloud Run proof of concept for container portability.
 
 ```text
 ┌──────────────────┐
 │ Local Developer  │
 │ VS Code + Git    │
 └────────┬─────────┘
-         │ git push / pull request
+         │ git push
          ▼
 ┌──────────────────┐
 │ GitHub Repo      │
@@ -190,7 +257,7 @@ The project focuses on:
 │ GitHub Actions   │
 │ CI/CD Pipeline   │
 └────────┬─────────┘
-         │ tests + docker build + push
+         │ docker build + test + push
          ▼
 ┌────────────────────────────┐
 │ Azure Container Registry   │
@@ -203,45 +270,28 @@ The project focuses on:
 │ Deployment: capstone-app   │
 │ Service: capstone-service  │
 └────────┬───────────────────┘
-         │ LoadBalancer or ClusterIP
+         │ service routing
          ▼
 ┌────────────────────────────┐
 │ The Shirt Bar Web App      │
 │ Flask + Jinja2 + CSS       │
+│ Tidio frontend chatbot     │
 └────────────────────────────┘
 ```
 
-### Staging, canary, and blue-green extension
+### Architecture Notes
 
-```text
-┌────────────────────────────┐
-│ Terraform                  │
-│ Staging Infrastructure     │
-└────────┬───────────────────┘
-         │ uses remote backend
-         ▼
-┌────────────────────────────┐
-│ Azure Storage              │
-│ Terraform State Container  │
-└────────────────────────────┘
-
-┌────────────────────────────┐
-│ AKS Staging Environment    │
-│ Kubernetes Manifests       │
-└────────┬───────────────────┘
-         │ deploys
-         ▼
-┌────────────────────────────┐
-│ Stable + Canary App        │
-│ Blue + Green App Examples  │
-└────────┬───────────────────┘
-         │ ClusterIP + port-forward
-         ▼
-┌────────────────────────────┐
-│ Local Browser / curl Tests │
-│ http://localhost:8080      │
-└────────────────────────────┘
-```
+| Zone | Components | Explanation |
+|---|---|---|
+| User & Internet Entry | Users, Internet, HTTPS | Customers access the store through a browser over HTTPS. |
+| Entry Layer | Azure Front Door/WAF, Application Gateway/Ingress | Recommended production layer for SSL offload, routing, WAF rules and rate limiting. |
+| AKS Cluster | Node pool, `capstone-app`, `capstone-service` | Runs the single Dockerised Flask application. |
+| App Modules | Product routes, cart routes, checkout routes, health endpoint | Core app functions tested through pytest and browser checks. |
+| Chatbot Widget | Tidio script in `base.html` | Frontend customer-support widget loaded by the website. |
+| Data / Storage | Azure SQL, Blob Storage, Redis | SQL and Blob are planned production integrations; Redis is a future caching recommendation. |
+| Supporting Services | ACR, Key Vault, Monitor, Log Analytics, Service Bus | ACR stores images, Key Vault protects secrets, Monitor provides visibility, Service Bus supports future decoupled events. |
+| DevOps / CI-CD | GitHub, GitHub Actions, Docker, Terraform, ACR, AKS, Jenkins validation | Code becomes a tested Docker image deployed to AKS. |
+| Backup-Cloud POC | GCP Cloud Run, Artifact Registry | Same container deployed to GCP to demonstrate portability. |
 
 ---
 
@@ -251,21 +301,21 @@ The project focuses on:
 |---|---|
 | Backend | Python, Flask |
 | Frontend | HTML, CSS, Jinja2 Templates |
-| AI Chatbot | Tidio |
-| Database | Azure SQL Database |
+| AI Chatbot / Customer Support | Tidio chatbot widget |
+| Testing | pytest |
+| Database | Azure SQL Database preparation |
 | Containerisation | Docker |
 | Container Registry | Azure Container Registry |
 | Orchestration | Azure Kubernetes Service |
-| Infrastructure as Code | Terraform |
-| Terraform State | Azure Storage remote backend |
 | CI/CD | GitHub Actions |
+| Alternative CI/CD Validation | Jenkins |
+| Infrastructure as Code | Terraform |
 | Deployment | Kubernetes YAML |
-| Deployment Strategies | Canary, Blue-Green |
-| Monitoring | Monitoring dashboard package, KQL query files |
-| Primary Cloud Platform | Microsoft Azure |
-| Backup-Cloud Showcase | Google Cloud Run and Google Artifact Registry |
+| Monitoring | Azure Monitor, Log Analytics, health checks |
+| Cloud Platform | Microsoft Azure |
+| Backup-Cloud POC | Google Cloud Run, Google Artifact Registry |
 | Payment Integration | Stripe Test Mode |
-| Documentation | Markdown, Runbooks, Playbooks |
+| Documentation | Markdown, Runbooks, Final Proposal |
 
 ---
 
@@ -277,18 +327,17 @@ The project focuses on:
 | Original AKS Cluster | `capstone-aks` |
 | Original Azure Container Registry | `capstonereg047af007` |
 | Original ACR Login Server | `capstonereg047af007.azurecr.io` |
+| Kubernetes Deployment | `capstone-app` |
+| Kubernetes Service | `capstone-service` |
+| Product Database | `tsb-products-db` |
+| Orders Database | `tsb-orders-db` |
 | Terraform Staging Resource Group | `rg-capstone-tf-staging` |
-| Terraform Staging AKS Cluster | `capstone-aks-tf-staging` |
+| Terraform Staging AKS | `capstone-aks-tf-staging` |
 | Terraform Staging ACR | `capstonetfacr047af007` |
-| Terraform Staging ACR Login Server | `capstonetfacr047af007.azurecr.io` |
 | Terraform State Resource Group | `rg-capstone-tfstate` |
 | Terraform State Storage Account | `capstonetfstate047af007` |
 | Terraform State Container | `tfstate` |
-| Current Staging Service Type | `ClusterIP` |
-| Product Database | `tsb-products-db` |
-| Orders Database | `tsb-orders-db` |
-
-> Resource names may differ if the team changes variable values in the Terraform files.
+| Terraform State Key | `staging.terraform.tfstate` |
 
 ---
 
@@ -300,15 +349,13 @@ The project focuses on:
 | `/product/<sku>` | `GET` | Product detail page |
 | `/cart` | `GET` | Shopping cart page |
 | `/cart/add/<sku>` | `POST` | Add selected product to cart |
-| `/cart/update/<cart_key>` | `POST` | Update item quantity |
+| `/cart/update/<cart_key>` | `POST` | Update cart quantity |
 | `/cart/remove/<cart_key>` | `POST` | Remove item from cart |
 | `/checkout` | `GET` | Checkout page |
-| `/checkout/create-session` | `POST` | Stripe checkout session route |
+| `/checkout/create-session` | `POST` | Creates checkout session / simulated order flow |
 | `/success` | `GET` | Successful payment page |
 | `/failed` | `GET` | Failed or cancelled payment page |
 | `/health` | `GET` | Health endpoint for Kubernetes probes |
-
-The `/health` route allows Kubernetes liveness and readiness probes to confirm that the Flask application is running correctly.
 
 Example health response:
 
@@ -358,8 +405,10 @@ pip install -r app/requirements.txt
 
 ### 5. Run the Flask app locally
 
+Run the app from the repository root using module mode:
+
 ```bash
-python app/app.py
+python -m app.app
 ```
 
 Local Flask URL:
@@ -368,11 +417,13 @@ Local Flask URL:
 http://localhost:5001
 ```
 
+> Note: avoid running `python app/app.py` from the repository root because Python may confuse `app/app.py` with the `app` package and produce an import error such as `'app' is not a package`.
+
 ---
 
 ## ✅ Automated Testing
 
-Automated tests were expanded using `pytest`.
+Automated tests were added using `pytest`.
 
 The test files are located in:
 
@@ -381,27 +432,21 @@ tests/
 ├── conftest.py
 ├── test_app_routes.py
 ├── test_cart_checkout_routes.py
-├── test_cart_flow_extended.py
-├── test_e2e_shop_flow.py
-├── test_product_model.py
-└── test_product_routes_extended.py
+├── test_product_routes_extended.py
+└── test_e2e_shop_flow.py
 ```
 
 The current tests validate:
 
-| Test Area | Coverage |
+| Test Area | Example Scope |
 |---|---|
-| Health route | `/health` returns `200 OK` and `{"status": "ok"}` |
-| Homepage | Main shop page loads successfully |
+| Health check | `/health` returns `200 OK` and `{"status":"ok"}` |
+| Homepage | Homepage loads The Shirt Bar content |
 | Product detail | Valid product page loads correctly |
-| Invalid product | Invalid SKU returns `404` |
-| Product model | Product lookup and required product fields |
-| Cart | Add, update, remove, quantity and option behaviour |
-| Shipping logic | Shipping below threshold and free shipping from $100 |
-| Checkout | Checkout redirects when empty and loads with cart items |
-| Success page | Cart clears after successful payment page |
-| Failed page | Failed payment route loads correctly |
-| End-to-end flow | Browse product, add to cart, view cart, and checkout |
+| Cart | Cart page and cart flows load correctly |
+| Checkout | Checkout, success and failed pages load correctly |
+| End-to-end shop flow | Main customer journey can be exercised through the Flask test client |
+| Chatbot UI check | Tidio widget was manually verified on desktop without breaking existing routes |
 
 Run tests locally:
 
@@ -409,13 +454,13 @@ Run tests locally:
 python -m pytest -v
 ```
 
-Expected output:
+Expected result:
 
 ```text
 26 passed
 ```
 
-These tests are also executed inside the GitHub Actions pipeline before the Docker image is built and pushed.
+The automated test suite was re-run after chatbot verification, and all tests passed.
 
 ---
 
@@ -466,144 +511,21 @@ The working command used for AKS was:
 
 ```bash
 docker buildx build --platform linux/amd64 \
+  -t capstonereg047af007.azurecr.io/ecommerce-app:v23 \
+  -f app/Dockerfile . \
+  --push
+```
+
+For Terraform staging / latest staging image:
+
+```bash
+docker buildx build --platform linux/amd64 \
   -t capstonetfacr047af007.azurecr.io/ecommerce-app:v24 \
   -f app/Dockerfile . \
   --push
 ```
 
 This avoids the `ImagePullBackOff` issue caused by a platform mismatch.
-
----
-
-## 🏗️ Terraform Staging Infrastructure
-
-Terraform was added to support managed staging infrastructure.
-
-Terraform files are located in:
-
-```text
-terraform/
-├── backend.tf
-├── main.tf
-├── outputs.tf
-├── README.md
-└── variables.tf
-```
-
-### What Terraform creates
-
-| Resource | Purpose |
-|---|---|
-| Azure Resource Group | Holds the Terraform-managed staging resources |
-| Azure Container Registry | Stores staging Docker images |
-| Azure Kubernetes Service | Runs the staging app |
-| Log Analytics Workspace | Stores AKS monitoring logs and metrics |
-| AKS OMS Agent | Connects AKS to Log Analytics |
-| Storage Account | Prepared for future product image storage |
-| Blob Container | Prepared for product image assets |
-| AcrPull Role Assignment | Allows AKS to pull images from ACR |
-
-### Typical Terraform workflow
-
-Go to the Terraform directory:
-
-```bash
-cd terraform
-```
-
-Then run:
-
-```bash
-terraform init
-terraform fmt
-terraform validate
-terraform plan
-```
-
-Only apply after reviewing the plan:
-
-```bash
-terraform apply
-```
-
-When prompted, type:
-
-```text
-yes
-```
-
-### Verified staging result
-
-Terraform successfully created the staging infrastructure used for AKS testing.
-
-A clean Terraform plan was later confirmed:
-
-```text
-No changes. Your infrastructure matches the configuration.
-```
-
----
-
-## 🔐 Terraform Remote Backend
-
-Terraform remote backend storage was added for team-based state management.
-
-This prevents each team member from using separate local `terraform.tfstate` files and allows Terraform state to be shared safely through Azure Storage.
-
-Backend bootstrap files are located in:
-
-```text
-terraform-backend/
-├── main.tf
-└── .terraform.lock.hcl
-```
-
-Main Terraform backend configuration is located in:
-
-```text
-terraform/backend.tf
-```
-
-### Remote backend details
-
-| Item | Value |
-|---|---|
-| Resource Group | `rg-capstone-tfstate` |
-| Storage Account | `capstonetfstate047af007` |
-| Container | `tfstate` |
-| State Key | `staging.terraform.tfstate` |
-
-### Backend workflow
-
-The backend storage resources are created from:
-
-```bash
-cd terraform-backend
-terraform init
-terraform validate
-terraform plan
-terraform apply
-```
-
-The main Terraform state is then migrated from the `terraform/` folder:
-
-```bash
-cd ../terraform
-terraform init -migrate-state
-```
-
-After migration, the main Terraform plan should be checked:
-
-```bash
-terraform validate
-terraform plan
-```
-
-Expected result:
-
-```text
-No changes. Your infrastructure matches the configuration.
-```
 
 ---
 
@@ -616,237 +538,29 @@ kubernetes/
 ├── deployment.yaml
 ├── service.yaml
 ├── canary/
-├── blue-green/
-└── environments/
+└── blue-green/
 ```
 
 Useful commands:
 
 ```bash
-kubectl get deployments -n staging
-kubectl get pods -n staging
-kubectl get svc -n staging
-kubectl describe deployment capstone-app -n staging
+kubectl get deployments
+kubectl get pods
+kubectl get svc
+kubectl describe deployment capstone-app
 ```
 
 Check the deployed image:
 
 ```bash
-kubectl describe deployment capstone-app -n staging | grep Image
+kubectl describe deployment capstone-app | grep Image
 ```
 
-Check services:
+Check the service:
 
 ```bash
-kubectl get svc -n staging
+kubectl get svc
 ```
-
-### Port-forward access for ClusterIP service
-
-If the service type is `ClusterIP`, use port-forwarding:
-
-```bash
-kubectl port-forward -n staging service/capstone-service 8080:80
-```
-
-Then open:
-
-```text
-http://localhost:8080
-```
-
----
-
-## 🐤 Canary Deployment Strategy
-
-A canary deployment is a safer way to test a new version of the application before fully replacing the stable version.
-
-In this project, the canary deployment strategy was tested successfully in the staging environment.
-
-Canary files are located in:
-
-```text
-kubernetes/canary/
-├── README.md
-├── stable-deployment.yaml
-├── canary-deployment.yaml
-└── service.yaml
-```
-
-### Why canary deployment is useful
-
-Instead of immediately sending all users to a new version, a canary deployment allows the team to:
-
-- Deploy a new version beside the stable version
-- Test the new version in a controlled way
-- Verify routes, product pages, cart pages, and images
-- Reduce the risk of releasing broken changes
-- Roll back more safely if something fails
-
-### Automated canary scripts
-
-The project now includes helper scripts:
-
-```text
-scripts/
-├── canary_promote_or_rollback.sh
-└── canary_rollback.sh
-```
-
-Run the canary promotion script from the project root:
-
-```bash
-./scripts/canary_promote_or_rollback.sh
-```
-
-The script performs:
-
-1. Checks the `staging` namespace.
-2. Applies stable deployment.
-3. Applies canary deployment.
-4. Applies canary service.
-5. Waits for stable and canary rollout.
-6. Starts local port-forwarding to the `ClusterIP` service.
-7. Tests:
-   - `/health`
-   - `/`
-   - `/product/TSHIRT-001`
-   - `/cart`
-8. Promotes the canary image to stable if checks pass.
-9. Removes the canary deployment after successful promotion.
-
-If canary has problems, run:
-
-```bash
-./scripts/canary_rollback.sh
-```
-
-### Tested canary result
-
-The automation was tested successfully against staging AKS.
-
-- Stable deployment rolled out successfully.
-- Canary deployment rolled out successfully.
-- `ClusterIP` service was tested through port-forwarding.
-- `/health`, homepage, product detail, and cart routes passed.
-- Canary image `capstonetfacr047af007.azurecr.io/ecommerce-app:v24` was promoted to the stable deployment.
-- Canary deployment was removed after promotion.
-- Stable deployment remained healthy with `2/2` replicas.
-
----
-
-## 🔵🟢 Blue-Green Deployment Strategy
-
-Blue-green deployment was added as a comparison to canary deployment.
-
-Blue-green files are located in:
-
-```text
-kubernetes/blue-green/
-├── README.md
-├── deployment-blue.yaml
-├── deployment-green.yaml
-└── service.yaml
-```
-
-### What blue-green deployment means
-
-Blue-green deployment runs two complete versions of the application environment:
-
-| Environment | Purpose |
-|---|---|
-| Blue | Current active version receiving traffic |
-| Green | New version prepared and tested before switching traffic |
-
-The Kubernetes service controls whether traffic goes to blue or green.
-
-Example selector for blue:
-
-```yaml
-selector:
-  app: capstone-blue-green-demo
-  version: blue
-```
-
-Example selector for green:
-
-```yaml
-selector:
-  app: capstone-blue-green-demo
-  version: green
-```
-
-### Blue-green test commands
-
-Apply the deployments and service:
-
-```bash
-kubectl apply -f kubernetes/blue-green/deployment-blue.yaml
-kubectl apply -f kubernetes/blue-green/deployment-green.yaml
-kubectl apply -f kubernetes/blue-green/service.yaml
-```
-
-Check rollout:
-
-```bash
-kubectl rollout status deployment/capstone-app-blue -n staging
-kubectl rollout status deployment/capstone-app-green -n staging
-```
-
-Test through port-forward:
-
-```bash
-kubectl port-forward -n staging service/capstone-blue-green-service 8081:80
-```
-
-Then test:
-
-```bash
-curl -i http://localhost:8081/health
-curl -i http://localhost:8081/
-curl -i http://localhost:8081/product/TSHIRT-001
-curl -i http://localhost:8081/cart
-```
-
-### Canary vs blue-green
-
-| Strategy | How It Works | Best For |
-|---|---|---|
-| Canary | Releases a new version gradually beside stable | Lower-risk gradual testing |
-| Blue-Green | Runs two full environments and switches traffic between them | Fast rollback and clear environment separation |
-
----
-
-## 📊 Monitoring Dashboard Package
-
-A monitoring dashboard package was added to support operational visibility.
-
-Monitoring files are located in:
-
-```text
-monitoring/
-├── README.md
-├── aks_monitoring_queries.kql
-├── application_health_queries.kql
-└── dashboard_plan.md
-```
-
-The monitoring package helps the team document and prepare monitoring for:
-
-- Application health
-- Deployment status
-- AKS workload visibility
-- Staging environment checks
-- Evidence collection for demos and handover
-
-Typical monitoring evidence should include:
-
-- Pod status
-- Deployment status
-- Service status
-- Application route checks
-- Screenshots of successful app access
-- Any dashboard screenshots or exported dashboard files
 
 ---
 
@@ -863,7 +577,7 @@ The CI/CD workflow performs:
 1. Checkout code
 2. Set up Python
 3. Install dependencies
-4. Run pytest route tests
+4. Run pytest tests
 5. Login to Azure Container Registry
 6. Build Docker image for Linux AMD64
 7. Push Docker image to ACR
@@ -894,57 +608,118 @@ The final `.` is important because the Docker build context must be the reposito
 
 ---
 
-## ⚠️ Important CI/CD Note: AKS Must Be Running for Deployment
+## 🧩 Terraform Staging Infrastructure
 
-The GitHub Actions workflow has two major parts:
+Terraform was added to demonstrate Infrastructure as Code for a staging environment.
 
-1. **CI checks** — install dependencies, run tests, build the Docker image, and push the image to ACR.
-2. **CD deployment** — connect to AKS and apply the Kubernetes deployment.
-
-If AKS is intentionally stopped for cost control, the CI stages can still pass, but the Kubernetes deployment stage may fail because GitHub Actions cannot reach the AKS API server.
-
-This does **not** necessarily mean the code, tests, Docker image, or pipeline build is broken.
-
-Expected situation when AKS is stopped:
-
-| Pipeline Stage | Expected Result |
-|---|---|
-| Install Dependencies & Run Tests | Pass |
-| Build and Push Docker Image | Pass |
-| Set AKS Context | May pass |
-| Deploy to Kubernetes Cluster | May fail because AKS is stopped |
-
-To run a fully green deployment pipeline:
-
-```bash
-az aks start --resource-group rg-capstone --name capstone-aks
-```
-
-Confirm AKS is running:
-
-```bash
-az aks show --resource-group rg-capstone --name capstone-aks --query "powerState.code" -o tsv
-```
-
-Expected output:
+Terraform files are located in:
 
 ```text
-Running
+terraform/
+├── main.tf
+├── variables.tf
+└── outputs.tf
 ```
 
-Then re-run the GitHub Actions workflow.
+The staging environment includes:
 
-After the team has finished verification or demo testing, stop AKS again:
+| Resource | Purpose |
+|---|---|
+| Resource Group | Holds staging resources |
+| AKS Cluster | Runs staging Kubernetes workloads |
+| Azure Container Registry | Stores staging Docker images |
+| Network resources | Provides network foundation |
+| Storage preparation | Supports Terraform/backend or future assets depending configuration |
+
+Example workflow:
 
 ```bash
-az aks stop --resource-group rg-capstone --name capstone-aks
+cd terraform
+terraform init
+terraform fmt
+terraform validate
+terraform plan
+terraform apply
 ```
+
+---
+
+## 🗃️ Terraform Remote Backend
+
+Terraform remote backend storage was prepared to avoid relying only on local state files.
+
+Backend details:
+
+| Item | Value |
+|---|---|
+| Resource Group | `rg-capstone-tfstate` |
+| Storage Account | `capstonetfstate047af007` |
+| Container | `tfstate` |
+| State Key | `staging.terraform.tfstate` |
+
+Remote backend configuration is stored under:
+
+```text
+terraform-backend/
+```
+
+After backend creation, the main Terraform state can be migrated from the `terraform/` folder.
+
+---
+
+## 🟢 Canary Deployment
+
+Canary deployment was added to reduce release risk.
+
+A canary release allows a new version of the app to run beside the stable version first. The team can test the new version before promoting it fully.
+
+Canary-related files include:
+
+```text
+kubernetes/canary/
+scripts/canary_promote_or_rollback.sh
+scripts/canary_rollback.sh
+```
+
+Canary validation included:
+
+- Stable deployment rollout
+- Canary deployment rollout
+- Service verification through port-forward
+- `/health`, homepage, product detail and cart route checks
+- Promotion of v24 to stable
+- Deletion of canary deployment after successful promotion
+- Stable deployment remaining healthy with `2/2` replicas
+
+---
+
+## 🔵🟢 Blue-Green Deployment
+
+Blue-green deployment manifests were added as another safer release strategy.
+
+Files are located in:
+
+```text
+kubernetes/blue-green/
+├── deployment-blue.yaml
+├── deployment-green.yaml
+└── service.yaml
+```
+
+Concept:
+
+| Environment | Meaning |
+|---|---|
+| Blue | Current stable version |
+| Green | New candidate version |
+
+The service selector can be switched from blue to green after verification. This keeps the old version available for rollback.
 
 ---
 
 ## 🗄️ Azure SQL Databases
 
-The project includes Azure SQL setup for product and order data.
+The project includes Azure SQL setup planning for product and order data.
 
 | Database | Purpose |
 |---|---|
@@ -955,11 +730,67 @@ Database scripts and setup helpers are stored in:
 
 ```text
 database/
-├── generate_aeo.py
-├── init_db.py
-├── schema_orders.sql
-├── schema_products.sql
-└── seed_products.sql
+```
+
+For the current capstone, some product data remains in the application model for simplicity. Azure SQL is documented as a production-ready integration path.
+
+---
+
+## 📊 Monitoring and Operational Evidence
+
+Monitoring and health-check documentation is stored under:
+
+```text
+documentation/monitoring_health_check_guide.md
+```
+
+Monitoring coverage includes:
+
+- `/health` route
+- Kubernetes liveness/readiness probe explanation
+- AKS pod and deployment checks
+- Service checks
+- GitHub Actions deployment status interpretation
+- Troubleshooting guidance when AKS is stopped for cost control
+- Screenshot evidence checklist
+
+Recommended production monitoring services:
+
+| Service | Purpose |
+|---|---|
+| Azure Monitor | Metrics and resource monitoring |
+| Log Analytics | Centralized logs and KQL queries |
+| Application Insights | Application performance and request tracing |
+| Alerts | Notification when uptime, deployment or performance thresholds fail |
+
+---
+
+## ☁️ GCP Cloud Run Backup-Cloud Proof of Concept
+
+In addition to the main Azure AKS deployment, this project includes a separate Google Cloud Platform proof of concept.
+
+The same Dockerised Flask e-commerce application was pushed to Google Artifact Registry and deployed to Google Cloud Run. This demonstrates that the application is portable across cloud providers because it is packaged as a container.
+
+This GCP deployment is **not** a full disaster recovery setup. It is a backup-cloud proof of concept used to show that the application can run outside Azure with minimal changes.
+
+| Item | Value |
+|---|---|
+| GCP Project ID | `shirtbar-gcp-showcase-khairul` |
+| Region | `asia-southeast1` |
+| Service | Google Cloud Run |
+| Container Registry | Google Artifact Registry |
+| Image | `ecommerce-app:gcp-demo-v1` |
+
+GCP documentation is stored in:
+
+```text
+docs/gcp-cloud-run-showcase.md
+```
+
+GCP evidence screenshots are stored in:
+
+```text
+docs/images/
 ```
 
 ---
@@ -970,15 +801,21 @@ A release rehearsal was completed as part of the handover process.
 
 Final successful result:
 
-- Docker image fixed to serve the full Flask shop app.
-- `/health` endpoint added for Kubernetes probes.
-- AKS successfully pulled and ran image `v23`.
-- Public LoadBalancer service returned `200 OK`.
-- Homepage loaded successfully.
-- Product detail page loaded successfully.
-- Cart page loaded successfully.
-- AKS was stopped after testing for cost control.
-- Release runbook was updated and merged.
+- Docker image fixed to serve the full Flask shop app
+- `/health` endpoint added for Kubernetes probes
+- AKS successfully pulled and ran image `v23`
+- Service returned `200 OK`
+- Homepage loaded successfully
+- Product detail page loaded successfully
+- Cart page loaded successfully
+- Terraform staging was created and validated
+- Canary deployment promotion flow was tested
+- Blue-green deployment manifests were prepared
+- GCP Cloud Run proof of concept was completed
+- Tidio chatbot was verified locally on desktop
+- Automated tests passed after chatbot verification
+- AKS was stopped after testing for cost control
+- Documentation and proposal were updated
 
 The release rehearsal runbook is documented in:
 
@@ -988,51 +825,20 @@ documentation/phase2_release_rehearsal_handover_runbook.md
 
 ---
 
-## 🌥️ GCP Cloud Run Backup-Cloud Showcase
-
-In addition to the main Azure AKS deployment, this project includes a separate Google Cloud Platform proof of concept.
-
-The same Dockerised Flask e-commerce application was pushed to Google Artifact Registry and deployed to Google Cloud Run. This demonstrates that the application is portable across cloud providers because it is packaged as a container.
-
-This GCP deployment is **not** a full disaster recovery setup. It is a backup-cloud proof of concept used to show that the application can run outside Azure with minimal changes. A complete disaster recovery setup would also require database replication, DNS failover, secrets management, monitoring, alerting, recovery time planning, and recovery point planning.
-
-| Item | Value |
-|---|---|
-| **GCP Project** | `The Shirt Bar GCP Showcase` |
-| **Project ID** | `shirtbar-gcp-showcase-khairul` |
-| **Region** | `asia-southeast1` |
-| **Container Registry** | Google Artifact Registry |
-| **Runtime Platform** | Google Cloud Run |
-| **Service Name** | `shirtbar-cloudrun-showcase` |
-| **Docker Image** | `ecommerce-app:gcp-demo-v1` |
-| **Cost Control** | Budget alert created and Cloud Run service removed after screenshot evidence |
-
-Full walkthrough and screenshot evidence are documented separately here:
-
-[docs/gcp-cloud-run-showcase.md](docs/gcp-cloud-run-showcase.md)
-
-### Presentation summary
-
-```text
-Our main production-style deployment is on Azure AKS. As a separate backup-cloud showcase, we deployed the same Dockerised Flask application to Google Cloud Run.
-
-This demonstrates multi-cloud portability because the application is packaged as a Docker container and can run outside Azure with minimal changes.
-
-This is not a full disaster recovery setup yet. A complete DR setup would also require database replication, DNS failover, secrets management, monitoring, alerting, and recovery planning.
-```
-
----
-
 ## 💰 Cost Control
 
 To reduce Azure cost, AKS can be stopped when not actively testing or demonstrating.
-
-For the GCP Cloud Run showcase, the Cloud Run service was deleted after screenshot evidence was captured. The Artifact Registry repository can also be deleted after the presentation if it is no longer needed.
 
 ### Stop AKS
 
 ```bash
 az aks stop --resource-group rg-capstone --name capstone-aks
+```
+
+For Terraform staging:
+
+```bash
+az aks stop --resource-group rg-capstone-tf-staging --name capstone-aks-tf-staging
 ```
 
 ### Check AKS power state
@@ -1059,41 +865,39 @@ Expected output when running:
 Running
 ```
 
+> Do not delete resource groups, public IPs, ACRs or Terraform backend storage unless the team has confirmed that no further grading, demo or evidence collection is required.
+
 ---
 
-## ⚠️ Known Limitation: Azure Public IP Quota
+## ⚠️ Important CI/CD Note: AKS Must Be Running for Deployment
 
-During staging testing, services were changed to `ClusterIP` instead of `LoadBalancer`.
+The GitHub Actions workflow has two major parts:
 
-### Reason
+1. **CI checks** — install dependencies, run tests, build the Docker image and push the image to ACR.
+2. **CD deployment** — connect to AKS and apply the Kubernetes deployment.
 
-The Azure subscription reached the public IP limit in the Southeast Asia region.
+If AKS is intentionally stopped for cost control, the CI stages can still pass, but the Kubernetes deployment stage may fail because GitHub Actions cannot reach the AKS API server.
 
-### Impact
+This does **not** necessarily mean the code, tests, Docker image or pipeline build is broken.
 
-AKS cannot provision another external public IP address for a new LoadBalancer service until quota is increased or unused public IPs are removed.
+Expected situation when AKS is stopped:
 
-### Current workaround
+| Pipeline Stage | Expected Result |
+|---|---|
+| Install Dependencies & Run Tests | Pass |
+| Build and Push Docker Image | Pass |
+| Set AKS Context | May pass |
+| Deploy to Kubernetes Cluster | May fail because AKS is stopped |
 
-Use:
+To run a fully green deployment pipeline:
 
 ```bash
-kubectl port-forward -n staging service/<service-name> 8080:80
+az aks start --resource-group rg-capstone --name capstone-aks
 ```
 
-Then open:
+Then re-run the GitHub Actions workflow.
 
-```text
-http://localhost:8080
-```
-
-### Future options
-
-- Request a public IP quota increase in Azure.
-- Delete unused public IP addresses.
-- Reuse an existing public IP where appropriate.
-- Use an ingress controller when a suitable public IP is available.
-- Continue using `ClusterIP` for internal staging validation.
+After verification or demo testing, stop AKS again.
 
 ---
 
@@ -1103,68 +907,41 @@ http://localhost:8080
 capstone/
 ├── app/
 │   ├── app.py
-│   ├── config.py
 │   ├── Dockerfile
 │   ├── requirements.txt
 │   ├── models/
 │   ├── routes/
-│   ├── templates/
-│   └── static/
+│   ├── static/
+│   └── templates/
 ├── ansible/
-│   ├── deployment_check.yml
-│   └── inventory.ini
 ├── database/
-│   ├── generate_aeo.py
-│   ├── init_db.py
-│   ├── schema_orders.sql
-│   ├── schema_products.sql
-│   └── seed_products.sql
 ├── docs/
 │   ├── gcp-cloud-run-showcase.md
 │   └── images/
 ├── documentation/
-│   ├── azure_blob_storage_future_plan.md
-│   ├── database_setup.md
-│   ├── deployment_strategy_future_plan.md
-│   ├── final_project_verification_checklist.md
+│   ├── chatbot_tidio_evidence.md
 │   ├── monitoring_health_check_guide.md
-│   ├── phase2_access_matrix.md
-│   ├── phase2_ansible_deployment_checks.md
-│   ├── phase2_azure_sql_setup.md
-│   ├── phase2_cost_governance.md
 │   ├── phase2_release_rehearsal_handover_runbook.md
 │   └── screenshots/
+│       └── chatbot/
+│           ├── chatbot-homepage-bubble.png
+│           ├── chatbot-window-opened.png
+│           └── chatbot-sample-reply.png
 ├── kubernetes/
 │   ├── deployment.yaml
 │   ├── service.yaml
 │   ├── canary/
-│   ├── blue-green/
-│   └── environments/
+│   └── blue-green/
 ├── monitoring/
-│   ├── README.md
-│   ├── aks_monitoring_queries.kql
-│   ├── application_health_queries.kql
-│   └── dashboard_plan.md
 ├── scripts/
 │   ├── canary_promote_or_rollback.sh
 │   └── canary_rollback.sh
 ├── terraform/
-│   ├── backend.tf
 │   ├── main.tf
-│   ├── outputs.tf
-│   ├── README.md
-│   └── variables.tf
+│   ├── variables.tf
+│   └── outputs.tf
 ├── terraform-backend/
-│   ├── main.tf
-│   └── .terraform.lock.hcl
 ├── tests/
-│   ├── conftest.py
-│   ├── test_app_routes.py
-│   ├── test_cart_checkout_routes.py
-│   ├── test_cart_flow_extended.py
-│   ├── test_e2e_shop_flow.py
-│   ├── test_product_model.py
-│   └── test_product_routes_extended.py
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml
@@ -1179,36 +956,107 @@ capstone/
 
 | Skill Area | Tools / Practices |
 |---|---|
-| Version Control | Git, GitHub, pull requests, branch cleanup |
-| CI/CD | GitHub Actions pipeline |
-| Automated Testing | pytest unit, route, integration, and e2e-style tests |
-| Containerisation | Docker, Dockerfile, image tagging |
+| Version Control | Git, GitHub, branches, commits and pull requests |
+| Python Web Development | Flask, Jinja2 templates, route handling |
+| Frontend Integration | Tidio chatbot widget embedded in shared template |
+| Automated Testing | pytest route and workflow tests |
+| Containerisation | Docker, Dockerfile, image tagging, Linux AMD64 build |
 | Cloud Registry | Azure Container Registry |
 | Kubernetes | AKS, Deployment, Service, probes, rollout status |
+| CI/CD | GitHub Actions pipeline |
+| Alternative CI/CD | Jenkins validation pipeline |
 | Infrastructure as Code | Terraform staging infrastructure |
-| Terraform State Management | Azure Storage remote backend |
-| Deployment Strategy | Canary deployment, scripted canary promotion, blue-green comparison |
-| Monitoring | Monitoring dashboard package and operational checks |
-| Cloud Database | Azure SQL Database |
-| Troubleshooting | ImagePullBackOff, Docker build context, platform mismatch, public IP quota, Terraform drift |
-| Release Management | Release rehearsal, runbook, handover notes |
-| Cost Awareness | AKS stop/start and Azure cost control |
+| Remote State | Azure Storage Terraform backend |
+| Cloud Database | Azure SQL Database preparation |
+| Release Management | Canary and blue-green deployment strategies |
+| Monitoring | Health checks, Azure Monitor/Log Analytics planning, runbooks |
+| Multi-Cloud Awareness | GCP Cloud Run and Artifact Registry proof of concept |
+| Troubleshooting | Import issues, ImagePullBackOff, platform mismatch, stopped AKS deployment failures |
+| Cost Awareness | AKS stop/start, Azure student plan cost control and budget guardrails |
+| Documentation | README, runbooks, evidence docs, final proposal and team handover guide |
+
+---
+
+## 🛠️ Troubleshooting Notes
+
+### `ModuleNotFoundError: No module named 'app.routes'; 'app' is not a package`
+
+Cause:
+
+```bash
+python app/app.py
+```
+
+This can make Python treat `app/app.py` as a standalone script instead of the `app` package.
+
+Fix:
+
+```bash
+python -m app.app
+```
+
+Run this from the repository root.
+
+---
+
+### Chatbot does not appear locally
+
+Check that the Tidio script exists in:
+
+```text
+app/templates/base.html
+```
+
+Then confirm the page is loading from a template that extends `base.html`.
+
+Also check browser privacy/ad-blocking extensions, because some extensions may block third-party chatbot widgets.
+
+---
+
+### Docker image works locally but fails on AKS
+
+Possible cause: ARM image built from Mac instead of Linux AMD64.
+
+Fix:
+
+```bash
+docker buildx build --platform linux/amd64 \
+  -t <acr-login-server>/ecommerce-app:<tag> \
+  -f app/Dockerfile . \
+  --push
+```
+
+---
+
+### GitHub Actions deployment fails but tests pass
+
+Possible cause: AKS is stopped for cost control.
+
+Fix:
+
+```bash
+az aks start --resource-group rg-capstone --name capstone-aks
+```
+
+Then re-run the workflow.
 
 ---
 
 ## 🔮 Future Improvements
 
-- Expand the GCP proof of concept into a fuller disaster recovery design with database replication, DNS failover, monitoring, and recovery testing.
-- Add product image uploads and storage using Azure Blob Storage
+- Fully integrate Azure SQL into the live Flask application
+- Move product images to Azure Blob Storage
 - Add HTTPS ingress with a custom domain
-- Add Azure Key Vault for secrets management
-- Add database migration workflow for Azure SQL
-- Add production-ready alerting rules for AKS, application health, and deployment failures
-- Add metric-based canary promotion and rollback using Azure Monitor or Argo Rollouts
-- Add production-grade traffic splitting through ingress, service mesh, or Argo Rollouts
-- Add more complete separation between development, staging, and production variable files
-- Add security scanning for Docker images and dependencies
-- Add automated cleanup workflow for temporary demo resources
+- Add Azure Front Door and Web Application Firewall
+- Add Application Insights for application performance monitoring
+- Add production-ready alerts for AKS, application health and deployment failures
+- Add Redis caching for campaign traffic spikes
+- Add Service Bus for decoupled order and notification workflows
+- Add formal load testing with k6 or Azure Load Testing
+- Add mobile chatbot screenshots and chatbot FAQ tuning notes
+- Expand Tidio chatbot configuration with approved brand FAQs and escalation rules
+- Expand the GCP proof of concept into a fuller disaster recovery design with database replication, DNS failover, monitoring and recovery testing
+- Add payment, shipping and marketplace integrations for Southeast Asia expansion
 
 ---
 
@@ -1216,116 +1064,17 @@ capstone/
 
 Before running a deployment demo:
 
-1. Start AKS.
-2. Confirm the cluster is running.
-3. Re-run the GitHub Actions workflow or push a new commit to `main`.
-4. Confirm the pod is `1/1 Running`.
-5. Test `/`, `/health`, `/product/TSHIRT-001`, and `/cart`.
-6. If the service is `ClusterIP`, use `kubectl port-forward`.
-7. Confirm product images load correctly.
-8. Capture screenshots as evidence.
-9. Stop AKS after testing to reduce cost.
-10. For the GCP showcase, verify the screenshots in `docs/gcp-cloud-run-showcase.md` and confirm Cloud Run was cleaned up after evidence was captured.
-
-### Before running Terraform
-
-1. Confirm the correct Azure subscription:
-
-```bash
-az account show
-```
-
-2. Go to the Terraform folder:
-
-```bash
-cd terraform
-```
-
-3. Initialise Terraform:
-
-```bash
-terraform init
-```
-
-4. Validate and review the plan:
-
-```bash
-terraform validate
-terraform plan
-```
-
-5. Only apply after the team agrees:
-
-```bash
-terraform apply
-```
-
-### Canary validation
-
-Run from the project root:
-
-```bash
-./scripts/canary_promote_or_rollback.sh
-```
-
-If needed, rollback canary manually:
-
-```bash
-./scripts/canary_rollback.sh
-```
-
-### Blue-green validation
-
-Apply blue-green files:
-
-```bash
-kubectl apply -f kubernetes/blue-green/deployment-blue.yaml
-kubectl apply -f kubernetes/blue-green/deployment-green.yaml
-kubectl apply -f kubernetes/blue-green/service.yaml
-```
-
-Test with port-forwarding:
-
-```bash
-kubectl port-forward -n staging service/capstone-blue-green-service 8081:80
-```
-
-Then test the routes:
-
-```bash
-curl -i http://localhost:8081/health
-curl -i http://localhost:8081/
-curl -i http://localhost:8081/product/TSHIRT-001
-curl -i http://localhost:8081/cart
-```
-
-### After merging the final improvements branch into `main`
-
-1. Switch back to `main` locally:
-
-```bash
-git checkout main
-```
-
-2. Pull the latest merged changes:
-
-```bash
-git pull origin main
-```
-
-3. Confirm the working tree is clean:
-
-```bash
-git status
-```
-
-4. Delete the merged local branch safely:
-
-```bash
-git branch -d infra-final-improvements
-```
-
-5. Prepare the final team playbook from the updated `main` branch.
+1. Pull the latest `main` branch.
+2. Activate the virtual environment.
+3. Run `python -m pytest -v` and confirm tests pass.
+4. Start AKS if a live Azure demo is required.
+5. Confirm the cluster is running.
+6. Re-run the GitHub Actions workflow or push a new commit to `main`.
+7. Confirm the pod is healthy.
+8. Test `/`, `/health`, `/product/TSHIRT-001`, `/cart` and `/checkout`.
+9. Check that the Tidio chatbot appears and opens on the website.
+10. Capture screenshots as evidence if anything changed.
+11. Stop AKS after testing to reduce cost.
 
 ---
 
