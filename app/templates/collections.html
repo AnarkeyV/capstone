@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Collections{% endblock %}
+
+{% block content %}
+<section class="page-container collections-page">
+  <div class="section-header">
+    <p class="eyebrow">Collections</p>
+    <h1>Shirts for Work, Weekends and Every Occasion</h1>
+    <p>
+      Explore The Shirt Bar’s curated menswear collection, designed for polished office wear,
+      relaxed smart-casual styling and breathable comfort in Singapore’s climate.
+    </p>
+  </div>
+
+  <div class="collection-grid">
+    <article class="collection-card">
+      <img
+        src="{{ url_for('static', filename='images/products/classic-oxford-white-shirt.png') }}"
+        alt="Classic white Oxford shirt"
+      >
+      <div class="collection-card-body">
+        <p class="eyebrow">Business Essentials</p>
+        <h2>Classic Oxford White Shirt</h2>
+        <p>
+          A crisp, timeless shirt for work, client meetings and formal occasions.
+          Designed for a clean and professional look.
+        </p>
+        <a href="{{ url_for('product.product_detail', product_id='TSHIRT-001') }}" class="btn btn-primary">
+          View Product
+        </a>
+      </div>
+    </article>
+
+    <article class="collection-card">
+      <img
+        src="{{ url_for('static', filename='images/products/premium-twill-blue-shirt.png') }}"
+        alt="Premium blue twill shirt"
+      >
+      <div class="collection-card-body">
+        <p class="eyebrow">Smart Casual</p>
+        <h2>Premium Twill Blue Shirt</h2>
+        <p>
+          A versatile blue shirt that works well from office hours to evening plans.
+          Polished, comfortable and easy to style.
+        </p>
+        <a href="{{ url_for('product.product_detail', product_id='TSHIRT-002') }}" class="btn btn-primary">
+          View Product
+        </a>
+      </div>
+    </article>
+
+    <article class="collection-card">
+      <img
+        src="{{ url_for('static', filename='images/products/mandarin-collar-linen-shirt.png') }}"
+        alt="Mandarin collar linen shirt"
+      >
+      <div class="collection-card-body">
+        <p class="eyebrow">Linen Collection</p>
+        <h2>Mandarin Collar Linen Shirt</h2>
+        <p>
+          Lightweight, breathable and refined. Ideal for Singapore’s warm weather,
+          casual Fridays and relaxed weekend dressing.
+        </p>
+        <a href="{{ url_for('product.product_detail', product_id='TSHIRT-003') }}" class="btn btn-primary">
+          View Product
+        </a>
+      </div>
+    </article>
+  </div>
+</section>
+{% endblock %}

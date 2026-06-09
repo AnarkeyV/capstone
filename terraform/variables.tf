@@ -34,6 +34,12 @@ variable "acr_sku" {
   default     = "Basic"
 }
 
+variable "acr_admin_enabled" {
+  description = "Whether ACR admin credentials are enabled. Keep true for the capstone demo if the existing GitHub Actions workflow still uses ACR_USERNAME/ACR_PASSWORD. Set false for production with OIDC/managed identity."
+  type        = bool
+  default     = true
+}
+
 variable "aks_cluster_name" {
   description = "Azure Kubernetes Service cluster name."
   type        = string
@@ -53,7 +59,7 @@ variable "kubernetes_version" {
 }
 
 variable "aks_node_count" {
-  description = "Number of AKS nodes."
+  description = "Number of AKS nodes. For production, use at least 2 nodes or cluster autoscaler."
   type        = number
   default     = 1
 }
@@ -86,4 +92,16 @@ variable "product_images_container_name" {
   description = "Blob container name for future product images."
   type        = string
   default     = "product-images"
+}
+
+variable "allow_public_product_images" {
+  description = "Allows nested blob items to be public. Use only for public product images, never for customer/order data."
+  type        = bool
+  default     = true
+}
+
+variable "product_images_container_access_type" {
+  description = "Access type for public product images. Use private for sensitive data."
+  type        = string
+  default     = "blob"
 }

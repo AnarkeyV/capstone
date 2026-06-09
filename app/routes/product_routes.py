@@ -18,3 +18,12 @@ def product_detail(product_id):
         abort(404)
 
     return render_template("product.html", product=product)
+
+@product_bp.route("/collections")
+def collections():
+    return render_template("collections.html")
+
+
+@product_bp.route("/about")
+def about():
+    return render_template("about.html")

@@ -72,10 +72,62 @@ This project demonstrates how a Flask-based online shop can be containerised wit
 | GCP Cloud Run proof of concept | Completed |
 | Final proposal documentation | Completed |
 
+| Production readiness sanity check | Completed - reviewed as excellent capstone prototype with production hardening items documented |
+| Terraform structure cleanup | Updated - split into clearer Terraform files |
+| Demo readiness | Updated - failed payment, successful payment and live background-change workflow documented |
+
 > **Current branch:** `main`  
 > **Documentation status:** Updated after chatbot verification and final proposal alignment.
 
+
 ---
+
+## 🧪 Production Readiness Sanity Check
+
+A technical sanity check was completed before final submission to separate what the capstone currently proves from what a real production e-commerce launch would still require.
+
+### Current Capstone Scope
+
+This repository demonstrates a working cloud prototype:
+
+- Flask e-commerce storefront with product, cart, checkout, success and failed-payment routes
+- Dockerised application image
+- Azure Container Registry image storage
+- Azure Kubernetes Service deployment
+- GitHub Actions CI/CD workflow
+- pytest test coverage for critical routes and flows
+- Terraform-managed staging infrastructure
+- Canary and blue-green release examples
+- Tidio chatbot widget integration
+- GCP Cloud Run backup-cloud proof of concept
+
+### Important Production Clarification
+
+This project should be presented as a **working capstone prototype and cloud architecture proof of concept**, not as a fully production-ready public store handling real money and customer personal data.
+
+Before a real go-live, the following items should be completed:
+
+| Area | Production Hardening Needed | Why It Matters |
+|---|---|---|
+| Payments | Add Stripe webhook verification before confirming payment | Prevents users from directly opening the success page without a verified payment event |
+| Data persistence | Store cart/order records in Azure SQL or another server-side database | Prevents order data from being lost or only stored in browser session cookies |
+| Secrets | Use Azure Key Vault and avoid development fallback secrets in production | Protects passwords, API keys and application signing keys |
+| CI/CD security | Move from long-lived ACR/kubeconfig secrets to GitHub OIDC with Azure login | Reduces credential exposure risk |
+| Availability | Use 2+ replicas, HPA and a PodDisruptionBudget | Reduces downtime during updates or node maintenance |
+| HTTPS/WAF | Add Ingress, TLS and Azure Front Door/Web Application Firewall | Protects public traffic and supports safer customer access |
+| Observability | Add Application Insights, alerts and structured logs | Helps the business detect and explain issues quickly |
+| App security | Add CSRF protection, rate limiting and generic error messages | Reduces common web application risk |
+
+A detailed review is included in:
+
+```text
+sanity_check.md
+```
+
+### How This Will Be Explained During Presentation
+
+> "Our prototype proves the shopping journey, cloud deployment, CI/CD workflow and release process. The sanity check shows that we understand what is already working, and what must be hardened before a real public production launch. This keeps the recommendation realistic for a business such as The Shirt Bar."
+
 
 ## 📖 Project Overview
 
@@ -609,6 +661,9 @@ The final `.` is important because the Docker build context must be the reposito
 ---
 
 ## 🧩 Terraform Staging Infrastructure
+
+> Final submission update: Terraform has been reorganized into separate files for clearer professional review: `versions.tf`, `providers.tf`, `main.tf`, `variables.tf`, `outputs.tf` and `terraform.tfvars.example`.
+
 
 Terraform was added to demonstrate Infrastructure as Code for a staging environment.
 

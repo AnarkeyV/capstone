@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<section class="page-container about-page">
+  <div class="section-header">
+    <p class="eyebrow">About The Shirt Bar</p>
+    <h1>Premium Menswear, Designed for the Modern Gentleman</h1>
+    <p>
+      The Shirt Bar is a Singapore-based menswear brand focused on timeless shirts,
+      refined styling and everyday comfort for work, weekends and special occasions.
+    </p>
+  </div>
+
+  <div class="about-story">
+    <div class="about-story-text">
+      <p>
+        We believe a good shirt should feel effortless. Every piece is selected with
+        attention to fit, fabric, versatility and long-term wearability.
+      </p>
+      <p>
+        From crisp office shirts to relaxed linen pieces, The Shirt Bar focuses on
+        wardrobe essentials that are practical, polished and easy to wear in Singapore’s climate.
+      </p>
+    </div>
+
+    <div class="about-story-image">
+      <img
+        src="{{ url_for('static', filename='images/products/classic-oxford-white-shirt.png') }}"
+        alt="Premium white Oxford shirt by The Shirt Bar"
+      >
+    </div>
+  </div>
+
+  <div class="about-grid">
+    <div class="about-card">
+      <h2>Refined Everyday Style</h2>
+      <p>
+        Shirts that look sharp without feeling overly formal, suitable for office wear,
+        dinners, events and daily dressing.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <h2>Comfort for Singapore</h2>
+      <p>
+        Breathable fabrics, clean silhouettes and practical styling choices for warm,
+        humid weather.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <h2>Customer First</h2>
+      <p>
+        A smoother online shopping experience helps customers browse, choose and check out
+        with confidence.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}
