@@ -16,11 +16,14 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       containers:
         - name: app
-          image: capstonetfacr047af007.azurecr.io/ecommerce-app:v24
+          image: capstonereg047af007.azurecr.io/ecommerce-app:v45
           ports:
             - containerPort: 8000
           envFrom:
@@ -37,19 +40,23 @@ spec:
               memory: "256Mi"
               cpu: "250m"
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
             capabilities:
               drop:
                 - ALL
           livenessProbe:
             httpGet:
-              path: /healthz
+              path: /health
               port: 8000
             initialDelaySeconds: 10
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /readyz
+              path: /health
               port: 8000
             initialDelaySeconds: 5
             periodSeconds: 5
