@@ -1,0 +1,23 @@
+# Copy this file to terraform.tfvars for local use.
+# Do not commit terraform.tfvars because it may contain environment-specific values.
+
+project_name        = "the-shirt-bar-capstone"
+environment         = "staging"
+resource_group_name = "rg-capstone-tf-staging"
+location            = "southeastasia"
+
+acr_name                  = "capstonetfacr047af007"
+acr_sku                   = "Basic"
+acr_admin_enabled         = true # Production recommendation: false after OIDC migration.
+aks_cluster_name          = "capstone-aks-tf-staging"
+aks_dns_prefix            = "capstoneakstfstaging"
+kubernetes_version        = null
+aks_node_count            = 1 # Production recommendation: 2+ or cluster autoscaler.
+aks_node_vm_size          = "Standard_B2s_v2"
+log_analytics_workspace_name = "law-capstone-tf-staging"
+log_retention_days        = 30
+
+storage_account_name                  = "tsbproductimg047af007"
+product_images_container_name          = "product-images"
+allow_public_product_images            = true
+product_images_container_access_type   = "blob"

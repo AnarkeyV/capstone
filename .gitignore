@@ -1,28 +1,46 @@
-# Terraform - only ignore the folder, keep the lock file
+# Terraform - ignore local state and runtime folders, keep dependency lock file
 .terraform/
 *.tfstate
 *.tfstate.*
+crash.log
+crash.*.log
+terraform.tfvars
+*.auto.tfvars
+*.auto.tfvars.json
 !/.terraform.lock.hcl
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.crt
+*.kubeconfig
+kubeconfig*
+KUBECONFIG*
+
+# Public/runtime output files that should not be committed
+external-ip.txt
+*.log
 
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.pyc
-.env
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
 venv/
 env/
-.env.local
 
-# Docker
-*.log
+# Docker / local tooling
+.docker/
 
-# IDE
+# IDE / OS
 .vscode/
-.DS_Store
-
-# Secrets
-*.pem
-*.key
-
+.idea/
 .DS_Store

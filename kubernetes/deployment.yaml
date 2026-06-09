@@ -5,7 +5,7 @@ metadata:
   labels:
     app: capstone
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: capstone
@@ -14,35 +14,42 @@ spec:
       labels:
         app: capstone
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
-      - name: app
-        image: capstonetfacr047af007.azurecr.io/ecommerce-app:v24
-        ports:
-        - containerPort: 8000
-
-        envFrom:
-        - secretRef:
-            name: app-secrets
-
-        env:
-        - name: AZURE_REGION
-          value: "southeastasia"
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
-            memory: "256Mi"
-            cpu: "250m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: app
+          image: capstonetfacr047af007.azurecr.io/ecommerce-app:v24
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: app-secrets
+          env:
+            - name: AZURE_REGION
+              value: "southeastasia"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
